@@ -29,6 +29,8 @@ public class MainActivity extends ActionBarActivity {
         // set as the ContentView for Activity
        // mGLView = new MyGLSurfaceView(this);
         setContentView(R.layout.activity_main);
+        ImageView ghostIcon = (ImageView) findViewById(R.id.ghost);
+        ghostIcon.setImageResource(R.drawable.chillghost);
     }
 
     class MyGLSurfaceView extends GLSurfaceView {
