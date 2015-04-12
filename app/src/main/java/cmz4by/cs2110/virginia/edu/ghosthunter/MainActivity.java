@@ -15,6 +15,7 @@ import android.view.Window;
 import android.widget.ImageView;
 
 
+
 public class MainActivity extends ActionBarActivity {
     public int weapon;
     public String direction;
@@ -27,7 +28,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Create a GLSurfaceView instance and
         // set as the ContentView for Activity
-       // mGLView = new MyGLSurfaceView(this);
+        //mGLView = new MyGLSurfaceView(this);
         setContentView(R.layout.activity_main);
     }
 
