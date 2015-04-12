@@ -10,30 +10,26 @@
 
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="center"
         android:text="UP"
         android:onClick="turnUp"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="center"
         android:text="LEFT"
         android:onClick="turnLeft"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="center"
         android:text="Right"
         android:onClick="turnRight"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="center"
         android:text="Down"
         android:onClick="turnDown"/>
 
@@ -46,13 +42,17 @@
         android:src="@drawable/poliwag_left"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="center"
         android:text="Give Spear"
         android:onClick="giveSpear"/>
 
-
+    <SurfaceView
+        android:layout_width="109dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/surfaceView"
+        android:layout_weight="0.20"
+        android:layout_gravity="center_horizontal" />
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
@@ -70,7 +70,7 @@
             android:background="@mipmap/ic_launcher"
             android:layout_alignParentLeft="true"
             android:id="@+id/ghost"
-
+            android:src="@drawable/chillghost"
             />
 
 

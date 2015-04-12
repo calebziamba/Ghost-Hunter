@@ -19,33 +19,45 @@ public class MainActivity extends ActionBarActivity {
     public int weapon;
     public String direction;
 
+  //  private GLSurfaceView mGLView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Create a GLSurfaceView instance and
+        // set as the ContentView for Activity
+       // mGLView = new MyGLSurfaceView(this);
         setContentView(R.layout.activity_main);
         ImageView ghostIcon = (ImageView) findViewById(R.id.ghost);
+        ghostIcon.setImageResource(R.drawable.chillghost);
+    }
 
-        //ghostIcon.setImageResource(R.drawable.chillghost); uncomment when image for ghost added
+    class MyGLSurfaceView extends GLSurfaceView {
+       // private final MyGLSurfaceView mRenderer;
+
+        public MyGLSurfaceView(Context context) {
+            super(context);
+
+            // Create an OpenGL ES2.0 context
+            setEGLContextClientVersion(2);
+            //mRenderer = new MyGLRenderer();
+
+           // setRenderer(mRenderer);
+
+            // Render the view only when there is a
+            // change in the drawing data
+            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            }
     }
 
 
-
-    // Here begins the button responses. Each will probably be replaced by a separate method
-    // for example: TurnUP would just call player.moveUp()
-
     public void turnUp(View view) {
-        // First, create view object to be able to call on specific view
         ImageView image = (ImageView) findViewById(R.id.player);
         direction = "up";
 
-        // sets the player view object to the appropriate image
-        if(weapon == 1) image.setImageResource(R.drawable.poliwag_back_spear); // if it has a spear
-        else image.setImageResource(R.drawable.poliwag_back); // no spear
-
-        // sets the Y-coordinate of the image view to the param.
-        image.setY(0);
+        if(weapon == 1) image.setImageResource(R.drawable.poliwag_back_spear);
+        else image.setImageResource(R.drawable.poliwag_back);
     }
 
     public void turnLeft(View view) {
@@ -54,9 +66,6 @@ public class MainActivity extends ActionBarActivity {
 
         if(weapon == 1) image.setImageResource(R.drawable.poliwag_left_spear);
         else image.setImageResource(R.drawable.poliwag_left);
-
-        // sets the X-coordinate of the image view to the param.
-        image.setX(0);
     }
 
     public void turnRight(View view) {
@@ -65,8 +74,6 @@ public class MainActivity extends ActionBarActivity {
 
         if(weapon == 1) image.setImageResource(R.drawable.poliwag_right_spear);
         else image.setImageResource(R.drawable.poliwag_right);
-
-        image.setX(1000);
     }
 
     public void turnDown(View view) {
@@ -75,8 +82,6 @@ public class MainActivity extends ActionBarActivity {
 
         if(weapon == 1) image.setImageResource(R.drawable.poliwag_front_spear);
         else image.setImageResource(R.drawable.poliwag_front);
-
-        image.setY(1000);
 
     }
 
