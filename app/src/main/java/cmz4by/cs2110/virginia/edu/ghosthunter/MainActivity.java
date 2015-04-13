@@ -15,6 +15,7 @@ import android.view.Window;
 import android.widget.ImageView;
 
 
+
 public class MainActivity extends ActionBarActivity {
     public int weapon;
     public String direction;
