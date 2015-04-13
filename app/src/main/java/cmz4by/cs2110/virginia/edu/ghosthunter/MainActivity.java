@@ -1,13 +1,11 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.opengl.GLSurfaceView;
+
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,10 +14,32 @@ import android.widget.ImageView;
 
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity  {
     public int weapon;
     public String direction;
 
+    private View.OnLongClickListener listener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            switch(v.getId()) {
+                case R.id.right:
+                    // player.moveRight();
+                    break;
+                case R.id.up:
+                    // player.moveUp();
+                    break;
+                case R.id.left:
+                    // player.moveLeft();
+                    break;
+                case R.id.down:
+                    // player.moveDown();
+                    break;
+
+            }
+
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +49,12 @@ public class MainActivity extends ActionBarActivity {
         ImageView ghostIcon = (ImageView) findViewById(R.id.ghost);
 
         //ghostIcon.setImageResource(R.drawable.chillghost); uncomment when image for ghost added
+
+
+
     }
+
+
 
 
 
