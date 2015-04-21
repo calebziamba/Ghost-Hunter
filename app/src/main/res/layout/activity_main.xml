@@ -8,75 +8,60 @@
     tools:context=".MainActivity"
     android:weightSum="1">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="UP"
+            android:id="@+id/up"
+            android:onClick="turnUp"
+            android:layout_above="@+id/right"
+            android:layout_toLeftOf="@+id/right"
+            android:layout_toStartOf="@+id/right" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:text="UP"
-        android:id="@+id/up"
-        android:onClick="turnUp"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="LEFT"
+            android:id="@+id/left"
+            android:onClick="turnLeft"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/down" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:text="LEFT"
-        android:id="@+id/left"
-        android:onClick="turnLeft"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="Right"
+            android:id="@+id/right"
+            android:onClick="turnRight"
+            android:layout_alignBaseline="@+id/left"
+            android:layout_alignBottom="@+id/left"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:text="Right"
-        android:id="@+id/right"
-        android:onClick="turnRight"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:text="Down"
-        android:id="@+id/down"
-        android:onClick="turnDown"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/player"
-        android:layout_gravity="center"
-        android:contentDescription="player_character"
-        android:src="@drawable/poliwag_left"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:text="Give Spear"
-        android:onClick="giveSpear"/>
-
-
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
-
-        <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <ImageView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@mipmap/ic_launcher"
+            android:layout_gravity="center_horizontal"
+            android:text="Down"
+            android:id="@+id/down"
+            android:onClick="turnDown"
+            android:layout_weight="1"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/right"
+            android:layout_toStartOf="@+id/right" />
+
+        <cmz4by.cs2110.virginia.edu.ghosthunter.Surface
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/surface"
             android:layout_alignParentLeft="true"
-            android:id="@+id/ghost"
-
-            />
-
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/up"
+            android:layout_alignParentTop="true" />
 
     </RelativeLayout>
 
