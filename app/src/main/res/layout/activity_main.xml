@@ -53,15 +53,6 @@
             android:layout_toLeftOf="@+id/right"
             android:layout_toStartOf="@+id/right" />
 
-        <cmz4by.cs2110.virginia.edu.ghosthunter.Surface
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/surface"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_above="@+id/up"
-            android:layout_alignParentTop="true" />
 
     </RelativeLayout>
 

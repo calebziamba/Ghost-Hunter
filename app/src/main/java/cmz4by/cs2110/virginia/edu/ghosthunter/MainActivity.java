@@ -1,6 +1,5 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
@@ -9,26 +8,27 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-
 
 
 public class MainActivity extends ActionBarActivity  {
     public int weapon;
     public String direction;
     private Player player;
-    private Surface surface;
+    private GameView gameView;
     private boolean buttonPressed = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_front);
-        setContentView(R.layout.activity_main);
-        surface = (Surface) findViewById(R.id.surface);
-        player = surface.getPlayer();
+
+        gameView = new GameView(this);
+        setContentView(gameView);
+
+        player = gameView.getPlayer();
 
         Button right = (Button) findViewById(R.id.right);
         right.setOnTouchListener(listener);
@@ -116,6 +116,7 @@ public class MainActivity extends ActionBarActivity  {
 
     public void turnDown(View view) {
         // player.moveDown();
+
     }
     */
 
@@ -134,7 +135,5 @@ public class MainActivity extends ActionBarActivity  {
         return super.onOptionsItemSelected(item);
     }
 
-    public Player getPlayer() {
-        return this.player;
-    }
 }
+
