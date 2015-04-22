@@ -5,39 +5,42 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
-
 public class Ghost {
     // direction = 0 up, 1 left, 2 down, 3 right,
     // animation = 3 back, 1 left, 0 front, 2 right
     int[] DIRECTION_TO_ANIMATION_MAP = { 3, 1, 0, 2 };
     private static final int BMP_ROWS = 4;
     private static final int BMP_COLUMNS = 3;
+    private static final int MAX_SPEED = 5;
+    private GameView gameView;
+    private Bitmap bmp;
     private int x = 0;
     private int y = 0;
     private int xSpeed;
     private int ySpeed;
-    private GameView gameView;
-    private Bitmap bmp;
     private int currentFrame = 0;
     private int width;
     private int height;
 
     public Ghost(GameView gameView, Bitmap bmp) {
-        this.gameView = gameView;
-        this.bmp = bmp;
         this.width = bmp.getWidth() / BMP_COLUMNS;
         this.height = bmp.getHeight() / BMP_ROWS;
-        Random rnd = new Random(System.currentTimeMillis());
-        xSpeed = rnd.nextInt(50)-10;
-        ySpeed = rnd.nextInt(50)-10;
+        this.gameView = gameView;
+        this.bmp = bmp;
+
+        Random rnd = new Random();
+        x = rnd.nextInt(gameView.getWidth() - width);
+        y = rnd.nextInt(gameView.getHeight() - height);
+        xSpeed = rnd.nextInt(MAX_SPEED * 2) - MAX_SPEED;
+        ySpeed = rnd.nextInt(MAX_SPEED * 2) - MAX_SPEED;
     }
 
     private void update() {
-        if (x > gameView.getWidth() - width - xSpeed || x + xSpeed < 0) {
+        if (x >= gameView.getWidth() - width - xSpeed || x + xSpeed <= 0) {
             xSpeed = -xSpeed;
         }
         x = x + xSpeed;
-        if (y > gameView.getHeight() - height - ySpeed || y + ySpeed < 0) {
+        if (y >= gameView.getHeight() - height - ySpeed || y + ySpeed <= 0) {
             ySpeed = -ySpeed;
         }
         y = y + ySpeed;

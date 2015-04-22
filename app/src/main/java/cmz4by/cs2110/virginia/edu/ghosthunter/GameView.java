@@ -1,20 +1,20 @@
 
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
+import java.util.ArrayList;
+import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.view.SurfaceView;
 import android.view.SurfaceHolder;
-
+import android.view.SurfaceView;
 
 public class GameView extends SurfaceView {
-    private Bitmap bmp;
     private SurfaceHolder holder;
     private GameLoopThread gameLoopThread;
-    private Ghost ghost;
+    private List<Ghost> ghosts = new ArrayList<Ghost>();
 
     public GameView(Context context) {
         super(context);
@@ -37,22 +37,36 @@ public class GameView extends SurfaceView {
 
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
+                createSprites();
                 gameLoopThread.setRunning(true);
                 gameLoopThread.start();
             }
 
             @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            public void surfaceChanged(SurfaceHolder holder, int format,
+                                       int width, int height) {
             }
         });
-        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray);
-        ghost = new Ghost(this,bmp);
+    }
+
+    private void createSprites() {
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+    }
+
+    private Ghost createSprite(int resource) {
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), resource);
+        return new Ghost(this,bmp);
     }
 
     @Override
     public void draw(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
-        ghost.draw(canvas);
-
+        for (Ghost ghost : ghosts) {
+            ghost.draw(canvas);
+        }
     }
 }
