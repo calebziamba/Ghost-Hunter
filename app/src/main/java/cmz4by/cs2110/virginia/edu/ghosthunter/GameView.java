@@ -55,6 +55,10 @@ public class GameView extends SurfaceView {
         ghosts.add(createSprite(R.drawable.ghostarray));
         ghosts.add(createSprite(R.drawable.ghostarray));
         ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
     }
 
     private Ghost createSprite(int resource) {
@@ -63,7 +67,7 @@ public class GameView extends SurfaceView {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
         for (Ghost ghost : ghosts) {
             ghost.draw(canvas);
