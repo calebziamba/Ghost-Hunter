@@ -47,7 +47,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap quitGame;
     private Bitmap pauseGame;
 
-    int score = 0;
+    long score = 0;
 
 
 
@@ -82,12 +82,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         leftSpace = new Rect(430, 1520, 530, 1620);
     }
 
-    public int getScore() {
+    public long getScore() {
         return this.score;
     }
 
-    public void increaseScore(){
-        score = score +1;
+    public void increaseScore(long sc){
+        score = sc;
     }
     @Override
     public void draw(Canvas c) {

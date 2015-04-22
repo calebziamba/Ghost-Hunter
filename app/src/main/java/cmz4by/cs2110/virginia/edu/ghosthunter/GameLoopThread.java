@@ -21,14 +21,20 @@ public class GameLoopThread extends Thread {
         long startTime;
         long sleepTime;
 
+        int counter = 0;
         while (running) {
             Canvas c = null;
             startTime = System.currentTimeMillis();
-            view.increaseScore();
+            long newScore = startTime % 1000;
+            view.increaseScore(newScore);
+
             try {
                 c = view.getHolder().lockCanvas();
                 synchronized (view.getHolder()) {
                     view.draw(c);
+                    if (counter < 10) counter++;
+                    if (counter == 10) view.increaseScore(view.getScore() + 1);
+                    counter = 0;
 
                 }
             } finally {
