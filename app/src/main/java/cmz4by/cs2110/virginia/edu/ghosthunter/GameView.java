@@ -81,15 +81,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         leftSpace = new Rect(430, 1520, 530, 1620);
     }
 
+
+
+//max X is 1080, max Y is 1535
+
+    public int getScore(){
+        return this.score;
+    }
+
     @Override
     public void draw(Canvas c) {
-
         Paint myPaint = new Paint();
+        myPaint.setTextSize(200);
         myPaint.setColor(Color.BLACK);
         c.drawColor(Color.RED);
 
         myPaint.setTextSize(200);
         c.drawText("" + score, 50, 50, myPaint);
+
 
         //walls
         c.drawRect(wall1, myPaint);
