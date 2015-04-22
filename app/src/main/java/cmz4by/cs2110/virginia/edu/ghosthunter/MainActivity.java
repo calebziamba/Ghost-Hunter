@@ -1,97 +1,124 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.opengl.GLSurfaceView;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity  {
     public int weapon;
     public String direction;
-
-  //  private GLSurfaceView mGLView;
+    private Player player;
+    private GameView gameView;
+    private boolean buttonPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
-        // Create a GLSurfaceView instance and
-        // set as the ContentView for Activity
-       // mGLView = new MyGLSurfaceView(this);
-        setContentView(R.layout.activity_main);
+        gameView = new GameView(this);
+        setContentView(gameView);
+
+        player = gameView.getPlayer();
+
+        Button right = (Button) findViewById(R.id.right);
+        right.setOnTouchListener(listener);
     }
 
-    class MyGLSurfaceView extends GLSurfaceView {
-       // private final MyGLSurfaceView mRenderer;
+    // button listener for press and hold
+    private View.OnTouchListener listener = new View.OnTouchListener() {
 
-        public MyGLSurfaceView(Context context) {
-            super(context);
+        @Override
+        public boolean onTouch(View v, MotionEvent e) {
 
-            // Create an OpenGL ES2.0 context
-            setEGLContextClientVersion(2);
-            //mRenderer = new MyGLRenderer();
+            // Start when button is first pressed
+            if(e.getAction() == MotionEvent.ACTION_DOWN) {
+                switch (v.getId()) {
+                    case R.id.right:
+                        buttonPressed = true;
 
-           // setRenderer(mRenderer);
+                        new Thread(new Runnable() {
+                            public void run() {
+                                while(buttonPressed) {
+                                    Log.d("button", "right button pressed");
+                                    player.moveRight();
+                                    try {
+                                        Thread.sleep(500, 0);
+                                    } catch (InterruptedException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+                        }).start();
+                        break;
+                    case R.id.up:
+                        // player.moveUp();
+                        break;
+                    case R.id.left:
+                        // player.moveLeft();
+                        break;
+                    case R.id.down:
+                        // player.moveDown();
+                        break;
+                    default:
+                        break;
+                }
+            } else if(e.getAction() == MotionEvent.ACTION_UP) { // when button is released
+                switch (v.getId()) {
+                    case R.id.right:
+                        // stop player.moveRight();
+                        break;
 
-            // Render the view only when there is a
-            // change in the drawing data
-            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+                    case R.id.up:
+                        // stop player.moveUp();
+                        break;
+
+                    case R.id.left:
+                        Log.d("button", "left button released");
+                        buttonPressed = false;
+                        return true;
+
+                    case R.id.down:
+                        // player.moveDown();
+                        break;
+
+                    default:
+                        break;
+                }
             }
-    }
+            return false;
+        }
+    };
 
+    // Here begins the button responses. Each will probably be replaced by a separate method
+    // for example: TurnUP would just call player.moveUp()
 
     public void turnUp(View view) {
-        ImageView image = (ImageView) findViewById(R.id.player);
-        direction = "up";
-
-        if(weapon == 1) image.setImageResource(R.drawable.poliwag_back_spear);
-        else image.setImageResource(R.drawable.poliwag_back);
+        // player.moveUp();
     }
 
     public void turnLeft(View view) {
-        ImageView image = (ImageView) findViewById(R.id.player);
-        direction = "left";
-
-        if(weapon == 1) image.setImageResource(R.drawable.poliwag_left_spear);
-        else image.setImageResource(R.drawable.poliwag_left);
+        player.moveLeft();
     }
 
-    public void turnRight(View view) {
-        ImageView image = (ImageView) findViewById(R.id.player);
-        direction = "right";
-
-        if(weapon == 1) image.setImageResource(R.drawable.poliwag_right_spear);
-        else image.setImageResource(R.drawable.poliwag_right);
+ /*   public void turnRight(View view) {
+        player.moveRight();
     }
 
     public void turnDown(View view) {
-        ImageView image = (ImageView) findViewById(R.id.player);
-        direction = "down";
-
-        if(weapon == 1) image.setImageResource(R.drawable.poliwag_front_spear);
-        else image.setImageResource(R.drawable.poliwag_front);
+        // player.moveDown();
 
     }
-
-    public void giveSpear(View view) {
-        ImageView image = (ImageView) findViewById(R.id.player);
-        weapon = 1;
-        if(direction.equals("up")) image.setImageResource(R.drawable.poliwag_back_spear);
-        else if(direction.equals("left")) image.setImageResource(R.drawable.poliwag_left_spear);
-        else if(direction.equals("right")) image.setImageResource(R.drawable.poliwag_right_spear);
-        else if(direction.equals("down")) image.setImageResource(R.drawable.poliwag_front_spear);
-        else image.setImageResource(R.drawable.poliwag_back_spear);
-    }
+    */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -107,4 +134,6 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
+
