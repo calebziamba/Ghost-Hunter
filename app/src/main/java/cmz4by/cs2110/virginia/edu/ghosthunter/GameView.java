@@ -1,4 +1,9 @@
+
 package cmz4by.cs2110.virginia.edu.ghosthunter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.Inflater;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,20 +12,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.ImageView;
 
-/**
- * Created by Student on 4/13/2015.
- */
-public class GameView extends SurfaceView {
 
-    private final SurfaceHolder holder;
-    private Bitmap ghost;
+public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
+    private Bitmap bmp;
+    private SurfaceHolder holder;
     private GameLoopThread gameLoopThread;
+    private List<Ghost> ghosts = new ArrayList<Ghost>();
+    private Player player;
+
     private int x = 0;
     private Rect wall1;
     private Rect wall2;
@@ -45,38 +47,19 @@ public class GameView extends SurfaceView {
     private Bitmap quitGame;
     private Bitmap pauseGame;
 
-    public GameView(Context context){
+    int score = 0;
+
+
+
+    public GameView(Context context) {
         super(context);
         gameLoopThread = new GameLoopThread(this);
         holder = getHolder();
-        holder.addCallback(new SurfaceHolder.Callback() {
+        holder.addCallback(this);
 
-        @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            boolean retry = true;
-            gameLoopThread.setRunning(false);
-            while (retry) {
-                try {
-                    gameLoopThread.join();
-                    retry = false;
-                } catch (InterruptedException e) {
-                    }
-            }
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_front);
+        player = new Player(this, bmp);
 
-        }
-
-        @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            gameLoopThread.setRunning(true);
-            gameLoopThread.start();
-            }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format,int width, int height) {
-            }
-
-        });
-        ghost = BitmapFactory.decodeResource(getResources(), R.drawable.chillghost);
         arrowUp = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_back_spear);
         arrowDown = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_front_spear);
         arrowLeft = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_left_spear);
@@ -97,48 +80,40 @@ public class GameView extends SurfaceView {
         upSpace = new Rect (540, 1460, 640, 1560);
         rightSpace = new Rect (660, 1520 , 760, 1620);
         leftSpace = new Rect(430, 1520, 530, 1620);
-
-
     }
 
-
-
-
-//max X is 1080, max Y is 1535
-
-    int score = 0;
-
-    public int getScore(){
+    public int getScore() {
         return this.score;
     }
 
+    public void increaseScore(){
+        score = score +1;
+    }
     @Override
+    public void draw(Canvas c) {
 
-
-    public void draw(Canvas canvas) {
         Paint myPaint = new Paint();
         myPaint.setTextSize(200);
         myPaint.setColor(Color.BLACK);
-        canvas.drawColor(Color.RED);
-        canvas.drawBitmap(ghost, x, 10, null);
-        canvas.drawText("" + score, 50, 50, myPaint);
+        c.drawColor(Color.RED);
+        c.drawText("" + score, 100, 100, myPaint);
 
         //walls
-        canvas.drawRect(wall1, myPaint);
-        canvas.drawRect(wall2, myPaint);
-        canvas.drawRect(wall3, myPaint);
-        canvas.drawRect(wall4, myPaint);
-        canvas.drawRect(wall5, myPaint);
-        canvas.drawRect(wall6, myPaint);
-        canvas.drawRect(wall7, myPaint);
+        c.drawRect(wall1, myPaint);
+        c.drawRect(wall2, myPaint);
+        c.drawRect(wall3, myPaint);
+        c.drawRect(wall4, myPaint);
+        c.drawRect(wall5, myPaint);
+        c.drawRect(wall6, myPaint);
+        c.drawRect(wall7, myPaint);
 
-       // spaces for buttons
-        canvas.drawRect(quitSpace, myPaint);
-        canvas.drawRect(pauseSpace, myPaint);
-        canvas.drawRect(upSpace, myPaint);
-        canvas.drawRect(downSpace, myPaint);
-        canvas.drawRect(rightSpace, myPaint);
-        canvas.drawRect(leftSpace, myPaint);
+        // spaces for buttons
+        c.drawRect(quitSpace, myPaint);
+        c.drawRect(pauseSpace, myPaint);
+        c.drawRect(upSpace, myPaint);
+        c.drawRect(downSpace, myPaint);
+        c.drawRect(rightSpace, myPaint);
+        c.drawRect(leftSpace, myPaint);
 
 
 
@@ -151,7 +126,55 @@ public class GameView extends SurfaceView {
         canvas.drawBitmap(arrowRight, 610, 1750, null); */
 
 
+        player.draw(c);
+        for (Ghost ghost : ghosts) {
+            ghost.draw(c);
+        }
+
 
     }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        boolean retry = true;
+        gameLoopThread.setRunning(false);
+        while (retry) {
+            try {
+                gameLoopThread.join();
+                retry = false;
+            } catch (InterruptedException e) {
+            }
+        }
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        createSprites();
+        gameLoopThread.setRunning(true);
+        gameLoopThread.start();
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+
+    private void createSprites() {
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+        ghosts.add(createSprite(R.drawable.ghostarray));
+    }
+
+    private Ghost createSprite(int resource) {
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), resource);
+        return new Ghost(this,bmp);
+    }
+
 
 }

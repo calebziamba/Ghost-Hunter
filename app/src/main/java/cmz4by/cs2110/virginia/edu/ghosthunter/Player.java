@@ -13,38 +13,18 @@ public class Player{
     final int PLAYER_SPEED = 5;
     private int playerX;
     private int playerY;
-    private Surface surface;
+    private GameView gameView;
     private Bitmap playerImage;
 
 
-    public Player(Surface s, Bitmap b) {
-        this.surface = s;
+    public Player(GameView v, Bitmap b) {
+        this.gameView = v;
         this.playerImage = b;
-        this.playerX = 0;
-        this.playerY = 0;
+        this.playerX = 100;
+        this.playerY = 100;
     }
 
-  /*  private void update() {
-        if (this.playerX > surface.getWidth() - this.playerImage.getWidth() - this.PLAYER_SPEED) {
-            moveLeft();
-        }
-        else if (this.playerX - this.PLAYER_SPEED < 0) {
-            moveRight();
-        }
-        else moveRight();
-
-        if (this.playerY - this.PLAYER_SPEED < 0){
-            //moveUp();
-        }
-        else if (this.playerY > surface.getHeight() - this.playerImage.getHeight()) {
-            // moveDown();
-        }
-    } */
-
-
-
     public void draw(Canvas c) {
-        // update();
         c.drawBitmap(this.playerImage, this.getPlayerX(), this.getPlayerY(), null);
     }
 

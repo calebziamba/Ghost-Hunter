@@ -2,16 +2,13 @@ package cmz4by.cs2110.virginia.edu.ghosthunter;
 
 import android.graphics.Canvas;
 
-/**
- * Created by Caleb on 4/19/2015.
- */
-public class GameLoopThread extends Thread{
-    private Surface surface;
+public class GameLoopThread extends Thread {
+    private GameView view;
     private boolean running = false;
     static final long FPS = 10;
 
-    public GameLoopThread(Surface s) {
-        this.surface = s;
+    public GameLoopThread(GameView view) {
+        this.view = view;
     }
 
     public void setRunning(boolean run) {
@@ -24,19 +21,19 @@ public class GameLoopThread extends Thread{
         long startTime;
         long sleepTime;
 
-        while(running) {
+        while (running) {
             Canvas c = null;
             startTime = System.currentTimeMillis();
-
+            view.increaseScore();
             try {
-                c = surface.getHolder().lockCanvas();
-                synchronized (surface.getHolder()) {
-                    surface.draw(c);
+                c = view.getHolder().lockCanvas();
+                synchronized (view.getHolder()) {
+                    view.draw(c);
 
                 }
             } finally {
                 if (c != null) {
-                    surface.getHolder().unlockCanvasAndPost(c);
+                    view.getHolder().unlockCanvasAndPost(c);
                 }
             }
 
@@ -46,7 +43,9 @@ public class GameLoopThread extends Thread{
                     sleep(sleepTime);
                 else
                     sleep(10);
+
             } catch (Exception e) {}
         }
     }
+
 }
