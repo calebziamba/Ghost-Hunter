@@ -30,10 +30,10 @@ public class MainActivity extends ActionBarActivity  {
 
         player = gameView.getPlayer();
 
-        Button right = (Button) findViewById(R.id.right);
-        right.setOnTouchListener(listener);
     }
 
+
+    /*
     // button listener for press and hold
     private View.OnTouchListener listener = new View.OnTouchListener() {
 
@@ -98,27 +98,7 @@ public class MainActivity extends ActionBarActivity  {
             return false;
         }
     };
-
-    // Here begins the button responses. Each will probably be replaced by a separate method
-    // for example: TurnUP would just call player.moveUp()
-
-    public void turnUp(View view) {
-        // player.moveUp();
-    }
-
-    public void turnLeft(View view) {
-        player.moveLeft();
-    }
-
- /*   public void turnRight(View view) {
-        player.moveRight();
-    }
-
-    public void turnDown(View view) {
-        // player.moveDown();
-
-    }
-    */
+*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
