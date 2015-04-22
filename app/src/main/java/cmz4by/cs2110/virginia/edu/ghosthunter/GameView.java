@@ -73,11 +73,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         ghosts.add(createSprite(R.drawable.ghostarray));
         ghosts.add(createSprite(R.drawable.ghostarray));
         ghosts.add(createSprite(R.drawable.ghostarray));
-        ghosts.add(createSprite(R.drawable.ghostarray));
-        ghosts.add(createSprite(R.drawable.ghostarray));
-        ghosts.add(createSprite(R.drawable.ghostarray));
-        ghosts.add(createSprite(R.drawable.ghostarray));
-        ghosts.add(createSprite(R.drawable.ghostarray));
+        for (int i = 0; i < 10000; i++) {
+            if (i % 1000 == 0) {
+                ghosts.add(createSprite(R.drawable.ghostarray));
+            }
+        }
     }
 
     private Ghost createSprite(int resource) {
