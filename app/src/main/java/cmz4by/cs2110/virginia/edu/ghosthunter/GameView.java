@@ -66,20 +66,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         arrowRight = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_right_spear);
         quitGame = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_back_gun);
         pauseGame = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_right_gun);
-        wall1 = new Rect(800, 1000, 820, 1300);
-        wall2 = new Rect(0, 1300, 820, 1320);
-        wall3 = new Rect(200, 800, 620, 820);
-        wall4 = new Rect(350, 1010, 370, 1160);
-        wall5 = new Rect(275, 200, 295, 500);
-        wall6 = new Rect(660, 540, 1080, 560);
+        wall1 = new Rect(800, 1200, 820, 1400);
+        wall2 = new Rect(0, 1500, 820, 1520);
+        wall3 = new Rect(200, 1000, 620, 1020);
+        wall4 = new Rect(350, 1210, 370, 1360);
+        wall5 = new Rect(275, 400, 295, 700);
+        wall6 = new Rect(660, 740, 1080, 760);
         wall7 = new Rect(750, 150, 770, 350);
         //button spaces (each arrow is 100x100; the quit and pause buttons are 150x150
-        quitSpace = new Rect(20, 1530, 170, 1680);
-        pauseSpace = new Rect(910, 1530, 1060, 1680);
-        downSpace = new Rect (540, 1580 , 640, 1680 );
-        upSpace = new Rect (540, 1460, 640, 1560);
-        rightSpace = new Rect (660, 1520 , 760, 1620);
-        leftSpace = new Rect(430, 1520, 530, 1620);
+        quitSpace = new Rect(20, 1730, 170, 1880);
+        pauseSpace = new Rect(910, 1730, 1060, 1880);
+        downSpace = new Rect (540, 1780 , 640, 1880 );
+        upSpace = new Rect (540, 1660, 640, 1760);
+        rightSpace = new Rect (660, 1720 , 760, 1820);
+        leftSpace = new Rect(430, 1720, 530, 1820);
     }
 //max X is 1080, max Y is 1535
 
@@ -99,7 +99,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawColor(Color.RED);
 
         myPaint.setTextSize(200);
-        c.drawText("" + score, 50, 50, myPaint);
+        c.drawText("" + score, 50, 200, myPaint);
 
 
         //walls

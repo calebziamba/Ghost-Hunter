@@ -31,8 +31,10 @@ public class GameLoopThread extends Thread {
                 synchronized (view.getHolder()) {
                     view.draw(c);
                     if (counter < 10) counter++;
-                    if (counter == 10) view.increaseScore(view.getScore() + 1);
-                    counter = 0;
+                    if (counter >= 10) {
+                        view.increaseScore(view.getScore() + 1);
+                        counter = 0;
+                    }
 
                 }
             } finally {
