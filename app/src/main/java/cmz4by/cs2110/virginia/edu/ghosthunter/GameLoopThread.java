@@ -32,6 +32,7 @@ public class GameLoopThread extends Thread{
                 c = surface.getHolder().lockCanvas();
                 synchronized (surface.getHolder()) {
                     surface.draw(c);
+
                 }
             } finally {
                 if (c != null) {

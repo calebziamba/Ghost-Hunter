@@ -107,14 +107,21 @@ public class GameView extends SurfaceView {
 //max X is 1080, max Y is 1535
 
     int score = 0;
+
+    public int getScore(){
+        return this.score;
+    }
+
     @Override
+
 
     public void draw(Canvas canvas) {
         Paint myPaint = new Paint();
+        myPaint.setTextSize(200);
         myPaint.setColor(Color.BLACK);
         canvas.drawColor(Color.RED);
         canvas.drawBitmap(ghost, x, 10, null);
-        canvas.drawText("" + score, 100, 100, myPaint);
+        canvas.drawText("" + score, 50, 50, myPaint);
 
         //walls
         canvas.drawRect(wall1, myPaint);
