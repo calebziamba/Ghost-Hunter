@@ -13,21 +13,89 @@ import android.view.Window;
 
 public class MainActivity extends ActionBarActivity {
 
+    private GameView gameView;
+    private Player player;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
-        setContentView(new GameView(this));
+        gameView = new GameView(this);
+        setContentView(gameView);
+
+        player = gameView.getPlayer();
+
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+    /*
+    // button listener for press and hold
+    private View.OnTouchListener listener = new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent e) {
+
+            // Start when button is first pressed
+            if(e.getAction() == MotionEvent.ACTION_DOWN) {
+                switch (v.getId()) {
+                    case R.id.right:
+                        buttonPressed = true;
+
+                        new Thread(new Runnable() {
+                            public void run() {
+                                while(buttonPressed) {
+                                    Log.d("button", "right button pressed");
+                                    player.moveRight();
+                                    try {
+                                        Thread.sleep(500, 0);
+                                    } catch (InterruptedException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+                        }).start();
+                        break;
+                    case R.id.up:
+                        // player.moveUp();
+                        break;
+                    case R.id.left:
+                        // player.moveLeft();
+                        break;
+                    case R.id.down:
+                        // player.moveDown();
+                        break;
+                    default:
+                        break;
+                }
+            } else if(e.getAction() == MotionEvent.ACTION_UP) { // when button is released
+                switch (v.getId()) {
+                    case R.id.right:
+                        // stop player.moveRight();
+                        break;
+
+                    case R.id.up:
+                        // stop player.moveUp();
+                        break;
+
+                    case R.id.left:
+                        Log.d("button", "left button released");
+                        buttonPressed = false;
+                        return true;
+
+                    case R.id.down:
+                        // player.moveDown();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            return false;
+        }
+    };
+*/
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
