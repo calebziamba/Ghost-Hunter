@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/settingsScreen">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="SETTINGS"
+        android:id="@+id/settings_text"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="81dp" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accelerometer"
+        android:id="@+id/accButton"
+        android:checked="false"
+        android:layout_below="@+id/settings_text"
+        android:layout_toRightOf="@+id/settings_text"
+        android:layout_toEndOf="@+id/settings_text"
+        android:layout_marginTop="53dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Accelerometer"
+        android:id="@+id/acc_text"
+        android:layout_alignBottom="@+id/accButton"
+        android:layout_toLeftOf="@+id/settings_text"
+        android:layout_toStartOf="@+id/settings_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Sound"
+        android:id="@+id/sound_text"
+        android:layout_marginTop="106dp"
+        android:layout_below="@+id/acc_text"
+        android:layout_alignLeft="@+id/acc_text"
+        android:layout_alignStart="@+id/acc_text" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sound"
+        android:id="@+id/soundButton"
+        android:checked="true"
+        android:layout_alignBottom="@+id/sound_text"
+        android:layout_alignLeft="@+id/accButton"
+        android:layout_alignStart="@+id/accButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Increased Difficulty"
+        android:id="@+id/level"
+        android:layout_below="@+id/sound_text"
+        android:layout_alignLeft="@+id/sound_text"
+        android:layout_alignStart="@+id/sound_text"
+        android:layout_marginTop="98dp" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hard"
+        android:id="@+id/hardButton"
+        android:checked="false"
+        android:layout_alignBottom="@+id/level"
+        android:layout_alignLeft="@+id/soundButton"
+        android:layout_alignStart="@+id/soundButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:id="@+id/settings_back"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>
