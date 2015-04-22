@@ -87,7 +87,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         Paint myPaint = new Paint();
         myPaint.setColor(Color.BLACK);
         c.drawColor(Color.RED);
-        c.drawText("" + score, 100, 100, myPaint);
+
+        myPaint.setTextSize(200);
+        c.drawText("" + score, 50, 50, myPaint);
 
         //walls
         c.drawRect(wall1, myPaint);
