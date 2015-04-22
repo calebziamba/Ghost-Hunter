@@ -1,3 +1,4 @@
+
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
 import android.content.Context;
@@ -5,8 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.SurfaceHolder;
 
 
 public class GameView extends SurfaceView {
@@ -44,13 +45,14 @@ public class GameView extends SurfaceView {
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             }
         });
-        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.chillghost);
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray);
         ghost = new Ghost(this,bmp);
     }
 
     @Override
     public void draw(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
+        ghost.draw(canvas);
 
     }
 }
