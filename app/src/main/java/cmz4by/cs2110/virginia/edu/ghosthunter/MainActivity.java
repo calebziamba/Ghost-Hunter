@@ -1,5 +1,6 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
+
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Layout;
@@ -15,6 +16,7 @@ public class MainActivity extends ActionBarActivity {
 
     private GameView gameView;
     private Player player;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
