@@ -1,12 +1,16 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.opengl.GLSurfaceView;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -20,11 +24,11 @@ public class MainActivity extends ActionBarActivity  {
     private GameView gameView;
     private boolean buttonPressed = false;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-
         gameView = new GameView(this);
         setContentView(gameView);
 
@@ -99,6 +103,7 @@ public class MainActivity extends ActionBarActivity  {
         }
     };
 */
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
