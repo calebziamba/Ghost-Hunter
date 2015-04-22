@@ -1,6 +1,5 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
-
 import android.graphics.Canvas;
 
 public class GameLoopThread extends Thread {
