@@ -47,7 +47,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap quitGame;
     private Bitmap pauseGame;
 
-    int score = 0;
+    long score = 0;
+
 
 
     public GameView(Context context) {
@@ -80,17 +81,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         rightSpace = new Rect (660, 1520 , 760, 1620);
         leftSpace = new Rect(430, 1520, 530, 1620);
     }
-
-
-
 //max X is 1080, max Y is 1535
 
-    public int getScore(){
+    public long getScore() {
         return this.score;
     }
 
+    public void increaseScore(long sc){
+        score = sc;
+    }
     @Override
     public void draw(Canvas c) {
+
         Paint myPaint = new Paint();
         myPaint.setTextSize(200);
         myPaint.setColor(Color.BLACK);
