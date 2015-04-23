@@ -50,7 +50,7 @@ public class SplashActivity extends Activity {
             }
 // Start main activity
 // Create an Intent in SplashActivity to start the MainActivity
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            Intent intent = new Intent(SplashActivity.this, StartMenu.class);
             SplashActivity.this.startActivity(intent);
             SplashActivity.this.finish();
         }
