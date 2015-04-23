@@ -48,7 +48,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap pauseGame;
 
     long score = 0;
-
+    boolean xyz = false;
 
 
     public GameView(Context context) {
@@ -80,6 +80,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         upSpace = new Rect (540, 1660, 640, 1760);
         rightSpace = new Rect (660, 1720 , 760, 1820);
         leftSpace = new Rect(430, 1720, 530, 1820);
+
     }
 //max X is 1080, max Y is 1535
 
@@ -131,6 +132,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
 
         player.draw(c);
+        if (this.score % 5 != 0) {
+            xyz = true;
+        }
+        if (this.score % 5 == 0 && xyz) {
+            ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
+            xyz = false;
+        }
         for (Ghost ghost : ghosts) {
             ghost.draw(c);
         }
@@ -172,11 +180,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         ghosts.add(createSprite(R.drawable.ghostarray));
         ghosts.add(createSprite(R.drawable.ghostarray));
         ghosts.add(createSprite(R.drawable.ghostarray));
-        for (int i = 0; i < 10000; i++) {
-            if (i % 1000 == 0) {
-                ghosts.add(createSprite(R.drawable.ghostarray));
-            }
-        }
+        ghosts.add(createSprite(R.drawable.ghostarray));
     }
 
     private Ghost createSprite(int resource) {
