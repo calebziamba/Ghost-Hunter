@@ -1,6 +1,7 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,8 +52,9 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
             public void onClick(View v) {
                 Log.i(TAG, "calling onClick() on Play button");
 
-                Toast.makeText(StartMenu.this, ("Play Game!"), Toast.LENGTH_LONG).show();
-                // In future, make this run the onStartGame method
+                Intent intent = new Intent(StartMenu.this, MainActivity.class);
+                StartMenu.this.startActivity(intent);
+                StartMenu.this.finish();
             }
         });
         mViewScoreButton.setOnClickListener(new View.OnClickListener() {

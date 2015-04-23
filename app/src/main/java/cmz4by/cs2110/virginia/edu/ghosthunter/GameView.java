@@ -3,15 +3,16 @@ package cmz4by.cs2110.virginia.edu.ghosthunter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -51,8 +52,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap bmpBomb;
 
     long score = 0;
-    boolean xyz = false;
+    private Context context;
 
+    private boolean buttonPressed = false;
+    boolean spawnGhost = false;
 
     public GameView(Context context) {
         super(context);
@@ -60,7 +63,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         holder = getHolder();
         holder.addCallback(this);
 
-        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_front);
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_front_spear);
         player = new Player(this, bmp);
 
         arrowUp = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_back_spear);
@@ -103,8 +106,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setColor(Color.BLACK);
         c.drawColor(Color.RED);
 
-        myPaint.setTextSize(200);
-        c.drawText("" + score, 50, 200, myPaint);
+        myPaint.setTextSize(80);
+        c.drawText("Score: " + score, 50, 200, myPaint);
 
 
         //walls
@@ -137,11 +140,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
         player.draw(c);
         if (this.score % 5 != 0) {
-            xyz = true;
+            spawnGhost = true;
         }
-        if (this.score % 5 == 0 && xyz) {
+        if (this.score % 5 == 0 && spawnGhost) {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
-            xyz = false;
+            spawnGhost = false;
         }
         for (int i = bombs.size() - 1; i >= 0; i--) {
             bombs.get(i).onDraw(c);
@@ -196,6 +199,148 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Ghost createSprite(int resource) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), resource);
         return new Ghost(this,bmp);
+    }
+
+
+    // handles "button" presses
+    @Override
+    public boolean onTouchEvent (MotionEvent event) {
+        if(touchedInsideItem(rightSpace, event.getX(), event.getY())) {
+            buttonPressed = true;
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN :
+                    new Thread(new Runnable() {
+                        public void run() {
+                            long ticksPS = 1000 / GameLoopThread.FPS;
+                            long startTime;
+                            long sleepTime;
+
+                            while(buttonPressed) {
+                                startTime = System.currentTimeMillis();
+
+                                player.moveRight();
+                                sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
+                                try {
+                                    if (sleepTime > 0)
+                                        Thread.sleep(sleepTime);
+                                    else
+                                        Thread.sleep(10);
+
+                                } catch (Exception e) {};
+                            }
+                        }
+                    }).start();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    buttonPressed = false;
+                    return true;
+                }
+            }
+        else if (touchedInsideItem(leftSpace, event.getX(), event.getY())) {
+            buttonPressed = true;
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN :
+                    new Thread(new Runnable() {
+                        public void run() {
+                            long ticksPS = 1000 / GameLoopThread.FPS;
+                            long startTime;
+                            long sleepTime;
+
+                            while(buttonPressed) {
+                                startTime = System.currentTimeMillis();
+
+                                player.moveLeft();
+                                sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
+                                try {
+                                    if (sleepTime > 0)
+                                        Thread.sleep(sleepTime);
+                                    else
+                                        Thread.sleep(10);
+
+                                } catch (Exception e) {};
+                            }
+                        }
+                    }).start();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    buttonPressed = false;
+                    return true;
+            }
+        }
+        else if (touchedInsideItem(upSpace, event.getX(), event.getY())) {
+            buttonPressed = true;
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN :
+                    new Thread(new Runnable() {
+                        public void run() {
+                            long ticksPS = 1000 / GameLoopThread.FPS;
+                            long startTime;
+                            long sleepTime;
+
+                            while(buttonPressed) {
+                                startTime = System.currentTimeMillis();
+
+                                player.moveUp();
+                                sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
+                                try {
+                                    if (sleepTime > 0)
+                                        Thread.sleep(sleepTime);
+                                    else
+                                        Thread.sleep(10);
+
+                                } catch (Exception e) {};
+                            }
+                        }
+                    }).start();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    buttonPressed = false;
+                    return true;
+            }
+
+        }
+        else if (touchedInsideItem(downSpace, event.getX(), event.getY())) {
+            buttonPressed = true;
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN :
+                    new Thread(new Runnable() {
+                        public void run() {
+                            long ticksPS = 1000 / GameLoopThread.FPS;
+                            long startTime;
+                            long sleepTime;
+
+                            while(buttonPressed) {
+                                startTime = System.currentTimeMillis();
+
+                                player.moveDown();
+                                sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
+                                try {
+                                    if (sleepTime > 0)
+                                        Thread.sleep(sleepTime);
+                                    else
+                                        Thread.sleep(10);
+
+                                } catch (Exception e) {};
+                            }
+                        }
+                    }).start();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    buttonPressed = false;
+                    return true;
+            }
+
+        }
+        else if(touchedInsideItem(quitSpace, event.getX(), event.getY())) {
+            Intent intent = new Intent(this.getContext(), StartMenu.class);
+            getContext().startActivity(intent);
+            this.destroyDrawingCache();
+        }
+        return true;
+    }
+
+    public boolean touchedInsideItem (Rect object, float touchX, float touchY) {
+        return object.contains((int) touchX, (int) touchY);
     }
 
 }

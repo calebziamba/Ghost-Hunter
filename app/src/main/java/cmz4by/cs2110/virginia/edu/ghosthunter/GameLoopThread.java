@@ -20,8 +20,8 @@ public class GameLoopThread extends Thread {
         long ticksPS = 1000 / FPS;
         long startTime;
         long sleepTime;
-        int counter = 0;
 
+        int counter = 0;
         while (running) {
             Canvas c = null;
             startTime = System.currentTimeMillis();
@@ -42,6 +42,7 @@ public class GameLoopThread extends Thread {
                     view.getHolder().unlockCanvasAndPost(c);
                 }
             }
+
             sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
             try {
                 if (sleepTime > 0)
@@ -49,7 +50,7 @@ public class GameLoopThread extends Thread {
                 else
                     sleep(10);
 
-            } catch (Exception e) {};
+            } catch (Exception e) {}
         }
     }
 
