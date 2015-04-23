@@ -1,29 +1,25 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.opengl.GLSurfaceView;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.view.View;
+import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
 
-public class MainActivity extends ActionBarActivity  {
-    public int weapon;
-    public String direction;
-    private Player player;
+
+public class MainActivity extends ActionBarActivity {
+
     private GameView gameView;
-    private boolean buttonPressed = false;
+    private Player player;
 
 
     @Override
@@ -123,6 +119,6 @@ public class MainActivity extends ActionBarActivity  {
 
         return super.onOptionsItemSelected(item);
     }
-
 }
+
 
