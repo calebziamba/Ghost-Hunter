@@ -17,10 +17,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".StartMenu"></activity>
-        <activity android:name=".MainActivity"> </activity>
+        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"> </activity>
+
+        <activity android:name=".StartMenu"
+            android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
 
     </application>
-
 
 </manifest>

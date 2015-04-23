@@ -1,28 +1,32 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.Layout;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
+import android.widget.ImageView;
 import android.view.View;
+import android.os.Bundle;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
 
-public class MainActivity extends ActionBarActivity  {
-    public int weapon;
-    public String direction;
-    private Player player;
+
+public class MainActivity extends ActionBarActivity {
+
     private GameView gameView;
-    private boolean buttonPressed = false;
+    private Player player;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
 
         gameView = new GameView(this);
@@ -30,10 +34,10 @@ public class MainActivity extends ActionBarActivity  {
 
         player = gameView.getPlayer();
 
-        Button right = (Button) findViewById(R.id.right);
-        right.setOnTouchListener(listener);
     }
 
+
+    /*
     // button listener for press and hold
     private View.OnTouchListener listener = new View.OnTouchListener() {
 
@@ -98,27 +102,8 @@ public class MainActivity extends ActionBarActivity  {
             return false;
         }
     };
+*/
 
-    // Here begins the button responses. Each will probably be replaced by a separate method
-    // for example: TurnUP would just call player.moveUp()
-
-    public void turnUp(View view) {
-        // player.moveUp();
-    }
-
-    public void turnLeft(View view) {
-        player.moveLeft();
-    }
-
- /*   public void turnRight(View view) {
-        player.moveRight();
-    }
-
-    public void turnDown(View view) {
-        // player.moveDown();
-
-    }
-    */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -134,6 +119,6 @@ public class MainActivity extends ActionBarActivity  {
 
         return super.onOptionsItemSelected(item);
     }
-
 }
+
 

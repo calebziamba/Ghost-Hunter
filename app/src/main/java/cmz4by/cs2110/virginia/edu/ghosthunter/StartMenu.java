@@ -36,7 +36,7 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
     protected void onStart() {
         super.onStart();
         setContentView(R.layout.activity_start_menu);
-        Log.i(TAG, "calling onStart() in StartMenu");
+        Log.i(TAG, "calling onCreate() in StartMenu");
         // Get the view ID of the play button and set an onClick listener
         // Tell the app what to do when Play Button Clicked
         mPlayButton = (Button) findViewById(R.id.play);
@@ -51,7 +51,7 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "calling onClick() on Play button");
-                Toast.makeText(StartMenu.this, ("Play Game!"), Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(StartMenu.this, MainActivity.class);
                 StartMenu.this.startActivity(intent);
                 StartMenu.this.finish();
@@ -79,8 +79,6 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
                 toggleSound();
             }
         });
-
-
     }
 
     protected void goBack(int a) {
@@ -113,12 +111,12 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
     protected void toggleSound() {
         mySound = MediaPlayer.create(this, R.raw.graveyard);
         mSound = (ToggleButton) findViewById(R.id.soundButton);
-        if(mSound.isChecked()) {
+        if (mSound.isChecked()) {
             mySound.start();
-            mySound.setLooping(true);
         }
-        else
-            mySound.pause();
+        else {
+            mySound.release();
+        }
 
     }
 
