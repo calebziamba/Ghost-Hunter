@@ -1,6 +1,7 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,7 +36,7 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
     protected void onStart() {
         super.onStart();
         setContentView(R.layout.activity_start_menu);
-        Log.i(TAG, "calling onCreate() in StartMenu");
+        Log.i(TAG, "calling onStart() in StartMenu");
         // Get the view ID of the play button and set an onClick listener
         // Tell the app what to do when Play Button Clicked
         mPlayButton = (Button) findViewById(R.id.play);
@@ -50,9 +51,10 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "calling onClick() on Play button");
-
-                Toast.makeText(StartMenu.this, ("Play Game!"), Toast.LENGTH_LONG).show();
-                // In future, make this run the onStartGame method
+                Toast.makeText(StartMenu.this, ("Play Game!"), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(StartMenu.this, MainActivity.class);
+                StartMenu.this.startActivity(intent);
+                StartMenu.this.finish();
             }
         });
         mViewScoreButton.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +79,8 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
                 toggleSound();
             }
         });
+
+
     }
 
     protected void goBack(int a) {
@@ -109,12 +113,12 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
     protected void toggleSound() {
         mySound = MediaPlayer.create(this, R.raw.graveyard);
         mSound = (ToggleButton) findViewById(R.id.soundButton);
-        if (mSound.isChecked()) {
+        if(mSound.isChecked()) {
             mySound.start();
+            mySound.setLooping(true);
         }
-        else {
-            mySound.release();
-        }
+        else
+            mySound.pause();
 
     }
 
