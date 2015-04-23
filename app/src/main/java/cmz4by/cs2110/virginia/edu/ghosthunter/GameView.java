@@ -21,6 +21,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private SurfaceHolder holder;
     private GameLoopThread gameLoopThread;
     private List<Ghost> ghosts = new ArrayList<Ghost>();
+    private List<Bomb> bombs = new ArrayList<Bomb>();
     private Player player;
 
     private int x = 0;
@@ -46,6 +47,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap arrowLeft;
     private Bitmap quitGame;
     private Bitmap pauseGame;
+
+    private Bitmap bmpBomb;
 
     long score = 0;
     boolean xyz = false;
@@ -81,6 +84,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         rightSpace = new Rect (660, 1720 , 760, 1820);
         leftSpace = new Rect(430, 1720, 530, 1820);
 
+        bmpBomb = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
     }
 //max X is 1080, max Y is 1535
 
@@ -139,9 +143,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
             xyz = false;
         }
+        for (int i = bombs.size() - 1; i >= 0; i--) {
+            bombs.get(i).onDraw(c);
+        }
+        
         for (Ghost ghost : ghosts) {
             ghost.draw(c);
+
         }
+
 
 
     }
