@@ -39,14 +39,22 @@ public class Ghost {
         ySpeed = rnd.nextInt(MAX_SPEED * 2) - MAX_SPEED;
 
         int direction = getAnimationRow();
-        if (direction == 3) // ghost moving up
-            hitboxFront = new Rect(x, y, this.width + x, y + this.height/2);
-        else if (direction == 0) // ghost moving down
-            hitboxFront = new Rect(x, y + this.height/2, this.width + x, this.height + y);
-        else if (direction == 1) // ghost moving left
-            hitboxFront = new Rect(x, y, x + this.width/2, y + this.height);
-        else // ghost moving right
-            hitboxFront = new Rect(x + this.width/2, y, x + this.width, y + this.height);
+        if (direction == 3) { // ghost moving up
+            hitboxFront = new Rect(x, y, this.width + x, y + this.height / 2);
+            hitboxBack = new Rect(x, y + this.height / 2, this.width + x, this.height + y);
+        }
+        else if (direction == 0) { // ghost moving down
+            hitboxFront = new Rect(x, y + this.height / 2, this.width + x, this.height + y);
+            hitboxBack = new Rect(x, y, this.width + x, y + this.height / 2);
+        }
+        else if (direction == 1) { // ghost moving left
+            hitboxFront = new Rect(x, y, x + this.width / 2, y + this.height);
+            hitboxBack = new Rect(x + this.width / 2, y, x + this.width, y + this.height);
+        }
+        else { // ghost moving right
+            hitboxFront = new Rect(x + this.width / 2, y, x + this.width, y + this.height);
+            hitboxBack = new Rect(x, y, x + this.width/2, y + this.height);
+        }
 
     }
 
@@ -65,14 +73,22 @@ public class Ghost {
 
     private void updateHitboxes() {
         int direction = getAnimationRow();
-        if (direction == 3) // ghost moving up
-            hitboxFront.set(x, y, this.width + x, y + this.height/2);
-        if (direction == 0) // ghost moving down
-            hitboxFront.set(x, y + this.height/2, this.width + x, this.height + y);
-        if (direction == 1) // ghost moving left
-            hitboxFront.set(x, y, x + this.width/2, y + this.height);
-        if (direction == 2)
-            hitboxFront.set(x + this.width/2, y, x + this.width, y + this.height);
+        if (direction == 3) { // ghost moving up
+            hitboxFront.set(x, y, this.width + x, y + this.height / 2);
+            hitboxBack.set(x, y + this.height / 2, this.width + x, this.height + y);
+        }
+        else if (direction == 0) { // ghost moving down
+            hitboxFront.set(x, y + this.height / 2, this.width + x, this.height + y);
+            hitboxBack.set(x, y, this.width + x, y + this.height / 2);
+        }
+        else if (direction == 1) { // ghost moving left
+            hitboxFront.set(x, y, x + this.width / 2, y + this.height);
+            hitboxBack.set(x + this.width / 2, y, x + this.width, y + this.height);
+        }
+        else { // ghost moving right
+            hitboxFront.set(x + this.width / 2, y, x + this.width, y + this.height);
+            hitboxBack.set(x, y, x + this.width / 2, y + this.height);
+        }
     }
 
     public void draw(Canvas canvas) {
@@ -82,14 +98,19 @@ public class Ghost {
         Rect src = new Rect(srcX, srcY, srcX + width, srcY + height);
         Rect dst = new Rect(x, y, x + width, y + height);
         canvas.drawBitmap(bmp, src, dst, null);
-        Paint paint = new Paint();
-        paint.setColor(Color.CYAN);
-        canvas.drawRect(hitboxFront, paint);
     }
 
     private int getAnimationRow() {
         double dirDouble = (Math.atan2(xSpeed, ySpeed) / (Math.PI / 2) + 2);
         int direction = (int) Math.round(dirDouble) % BMP_ROWS;
         return DIRECTION_TO_ANIMATION_MAP[direction];
+    }
+
+    public Rect getHitboxFront() {
+        return hitboxFront;
+    }
+
+    public Rect getHitboxBack() {
+        return hitboxBack;
     }
 }

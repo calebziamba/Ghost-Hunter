@@ -15,6 +15,7 @@ import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
@@ -60,7 +61,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         holder = getHolder();
         holder.addCallback(this);
 
-        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_front_spear);
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.player_sprite_sheet);
         player = new Player(this, bmp);
 
         arrowUp = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_back_spear);
@@ -142,9 +143,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
             spawnGhost = false;
         }
-        for (Ghost ghost : ghosts) {
+        for (int i = ghosts.size() - 1; i > 0; i--) {
+            Ghost ghost = ghosts.get(i);
+
+            // check for if player and ghosts collide
+            if (Rect.intersects(player.getHitbox(), ghost.getHitboxBack())) {
+                ghosts.remove(i); // kill
+                this.score += 5;
+            }
+            if (Rect.intersects(player.getHitbox(), ghost.getHitboxFront())) {
+                gameOver(c, myPaint);
+                return;
+            }
             ghost.draw(c);
         }
+
 
 
     }
@@ -189,6 +202,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Ghost createSprite(int resource) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), resource);
         return new Ghost(this,bmp);
+    }
+
+    public void gameOver(Canvas c, Paint myPaint) {
+        gameLoopThread.setRunning(false);
+        c.drawColor(Color.RED);
+        myPaint.setTextSize(150);
+        myPaint.setFakeBoldText(true);
+        c.drawText("GAME OVER", this.getWidth() / 6, this.getHeight() / 3, myPaint);
+        myPaint.setFakeBoldText(false);
+        myPaint.setTextSize(80);
+        c.drawText("Your score was: " + score, this.getWidth()/4, this.getHeight()/2, myPaint);
     }
 
 
