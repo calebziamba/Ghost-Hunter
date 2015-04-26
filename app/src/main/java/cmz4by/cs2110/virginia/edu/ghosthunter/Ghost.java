@@ -3,6 +3,8 @@ package cmz4by.cs2110.virginia.edu.ghosthunter;
 import java.util.Random;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class Ghost {
@@ -21,6 +23,8 @@ public class Ghost {
     private int currentFrame = 0;
     private int width;
     private int height;
+    private Rect hitboxFront;
+    private Rect hitboxBack;
 
     public Ghost(GameView gameView, Bitmap bmp) {
         this.width = bmp.getWidth() / BMP_COLUMNS;
@@ -33,6 +37,25 @@ public class Ghost {
         y = rnd.nextInt(gameView.getHeight() - height);
         xSpeed = rnd.nextInt(MAX_SPEED * 2) - MAX_SPEED;
         ySpeed = rnd.nextInt(MAX_SPEED * 2) - MAX_SPEED;
+
+        int direction = getAnimationRow();
+        if (direction == 3) { // ghost moving up
+            hitboxFront = new Rect(x, y, this.width + x, y + this.height / 2);
+            hitboxBack = new Rect(x, y + this.height / 2, this.width + x, this.height + y);
+        }
+        else if (direction == 0) { // ghost moving down
+            hitboxFront = new Rect(x, y + this.height / 2, this.width + x, this.height + y);
+            hitboxBack = new Rect(x, y, this.width + x, y + this.height / 2);
+        }
+        else if (direction == 1) { // ghost moving left
+            hitboxFront = new Rect(x, y, x + this.width / 2, y + this.height);
+            hitboxBack = new Rect(x + this.width / 2, y, x + this.width, y + this.height);
+        }
+        else { // ghost moving right
+            hitboxFront = new Rect(x + this.width / 2, y, x + this.width, y + this.height);
+            hitboxBack = new Rect(x, y, x + this.width/2, y + this.height);
+        }
+
     }
 
     private void update() {
@@ -45,6 +68,27 @@ public class Ghost {
         }
         y = y + ySpeed;
         currentFrame = ++currentFrame % BMP_COLUMNS;
+       updateHitboxes();
+    }
+
+    private void updateHitboxes() {
+        int direction = getAnimationRow();
+        if (direction == 3) { // ghost moving up
+            hitboxFront.set(x, y, this.width + x, y + this.height / 2);
+            hitboxBack.set(x, y + this.height / 2, this.width + x, this.height + y);
+        }
+        else if (direction == 0) { // ghost moving down
+            hitboxFront.set(x, y + this.height / 2, this.width + x, this.height + y);
+            hitboxBack.set(x, y, this.width + x, y + this.height / 2);
+        }
+        else if (direction == 1) { // ghost moving left
+            hitboxFront.set(x, y, x + this.width / 2, y + this.height);
+            hitboxBack.set(x + this.width / 2, y, x + this.width, y + this.height);
+        }
+        else { // ghost moving right
+            hitboxFront.set(x + this.width / 2, y, x + this.width, y + this.height);
+            hitboxBack.set(x, y, x + this.width / 2, y + this.height);
+        }
     }
 
     public void draw(Canvas canvas) {
@@ -60,5 +104,13 @@ public class Ghost {
         double dirDouble = (Math.atan2(xSpeed, ySpeed) / (Math.PI / 2) + 2);
         int direction = (int) Math.round(dirDouble) % BMP_ROWS;
         return DIRECTION_TO_ANIMATION_MAP[direction];
+    }
+
+    public Rect getHitboxFront() {
+        return hitboxFront;
+    }
+
+    public Rect getHitboxBack() {
+        return hitboxBack;
     }
 }
