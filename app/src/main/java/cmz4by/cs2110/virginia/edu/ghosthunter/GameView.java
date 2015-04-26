@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -41,6 +42,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Rect downSpace;
     private Rect rightSpace;
     private Rect quitSpace;
+    private Rect attackSpace;
 
     private Bitmap arrowUp;
     private Bitmap arrowDown;
@@ -71,13 +73,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         arrowRight = BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow);
         attackButton = BitmapFactory.decodeResource(getResources(), R.drawable.attack_button);
 
-        downSpace = new Rect(50, 100, 100, 200);
-        leftSpace = new Rect(this.getWidth() - 2 * arrowRight.getWidth() - attackButton.getWidth() - 5, this.getHeight() / 2,
-                                this.getWidth() - arrowRight.getWidth() - attackButton.getWidth() - 5, this.getHeight() / 2 + arrowLeft.getHeight());
-        rightSpace = new Rect(this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2,
-                                this.getWidth(), this.getHeight() / 2 + arrowRight.getHeight());
-        upSpace = new Rect(this.getWidth() - arrowRight.getWidth() - arrowDown.getWidth(), this.getHeight() / 2 - arrowUp.getHeight() - 5,
-                                this.getHeight() - arrowRight.getWidth(), this.getHeight() - 5);
 
 
         wall1 = new Rect(800, 1200, 820, 1400);
@@ -122,27 +117,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawRect(wall7, myPaint);
 
 
-
+        Log.d("size", "screen width is: " + this.getWidth() + "\n and height is: " + this.getHeight());
         // spaces for buttons
-  //      c.drawBitmap(arrowRight, this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2, myPaint);
-  //      c.drawBitmap(arrowDown, this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2 + arrowRight.getHeight(), myPaint);
-        c.drawBitmap(arrowLeft, this.getWidth() - 2 * arrowRight.getWidth() - attackButton.getWidth() - 5, this.getHeight() / 2, myPaint);
-        c.drawBitmap(arrowUp, this.getWidth() - arrowRight.getWidth() - arrowDown.getWidth(), this.getHeight() / 2 - arrowUp.getHeight() - 5, myPaint);
+        c.drawBitmap(arrowRight, this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2, myPaint);
+        c.drawBitmap(arrowDown, this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2 + arrowRight.getHeight(), myPaint);
+        c.drawBitmap(arrowLeft, this.getWidth() - 2 * arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2, myPaint);
+        c.drawBitmap(arrowUp, this.getWidth() - arrowRight.getWidth() - arrowDown.getWidth(), this.getHeight() / 2 - arrowUp.getHeight(), myPaint);
         c.drawBitmap(attackButton, this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2, myPaint);
-
-        c.drawRect(leftSpace, myPaint);
-        c.drawRect(rightSpace, myPaint);
-        c.drawRect(upSpace, myPaint);
-        c.drawRect(downSpace, myPaint);
-
-        // use these in place of quite, pause, and arrowSpaces
-        /* canvas.drawBitmap(quitGame, 50, 1400, null);
-        canvas.drawBitmap(pauseGame, 1050, 1900, null);
-        canvas.drawBitmap(arrowUp, 580, 1700, null);
-        canvas.drawBitmap(arrowDown, 580, 1800, null);
-        canvas.drawBitmap(arrowLeft, 550, 1750, null);
-        canvas.drawBitmap(arrowRight, 610, 1750, null); */
-
 
         player.draw(c);
         if (this.score % 5 != 0) {
@@ -188,6 +169,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         createSprites();
         gameLoopThread.setRunning(true);
         gameLoopThread.start();
+
+
+        downSpace = new Rect(this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2 + arrowRight.getHeight(),
+                                this.getWidth() - arrowRight.getWidth() - attackButton.getWidth() + arrowDown.getWidth(),
+                                this.getHeight() / 2 + arrowRight.getHeight() + arrowDown.getHeight());
+        leftSpace = new Rect(this.getWidth() - 2 * arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2,
+                                this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2 + arrowLeft.getHeight());
+        rightSpace = new Rect(this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2,
+                                this.getWidth(), this.getHeight() / 2 + arrowRight.getHeight());
+        upSpace = new Rect(this.getWidth() - arrowRight.getWidth() - arrowDown.getWidth(), this.getHeight() / 2 - arrowUp.getHeight(),
+                                this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2);
+        attackSpace = new Rect(this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight()/2,
+                                    this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2 + attackButton.getHeight());
     }
 
     @Override
@@ -222,7 +216,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     // handles "button" presses
     @Override
     public boolean onTouchEvent (MotionEvent event) {
-        if(touchedInsideItem(rightSpace, event.getX(), event.getY())) {
+        if(rightSpace.contains((int) event.getX(), (int) event.getY())) {
             buttonPressed = true;
             switch(event.getAction()) {
                 case MotionEvent.ACTION_DOWN :
@@ -253,7 +247,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                     return true;
                 }
             }
-        else if (touchedInsideItem(leftSpace, event.getX(), event.getY())) {
+        else if (leftSpace.contains((int) event.getX(), (int) event.getY())) {
             buttonPressed = true;
             switch(event.getAction()) {
                 case MotionEvent.ACTION_DOWN :
@@ -284,7 +278,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                     return true;
             }
         }
-        else if (touchedInsideItem(upSpace, event.getX(), event.getY())) {
+        else if (upSpace.contains((int) event.getX(), (int) event.getY())) {
             buttonPressed = true;
             switch(event.getAction()) {
                 case MotionEvent.ACTION_DOWN :
@@ -316,7 +310,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             }
 
         }
-        else if (touchedInsideItem(downSpace, event.getX(), event.getY())) {
+        else if (downSpace.contains((int) event.getX(), (int) event.getY())) {
             buttonPressed = true;
             switch(event.getAction()) {
                 case MotionEvent.ACTION_DOWN :
@@ -348,7 +342,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             }
 
         }
-        else if(touchedInsideItem(quitSpace, event.getX(), event.getY())) {
+        else if (attackSpace.contains((int) event.getX(), (int) event.getY())) {
+            Log.d("button", "attack!!");
+        }
+        else if(quitSpace.contains((int) event.getX(), (int) event.getY())) {
             Intent intent = new Intent(this.getContext(), StartMenu.class);
             getContext().startActivity(intent);
             this.destroyDrawingCache();
@@ -356,8 +353,5 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         return true;
     }
 
-    public boolean touchedInsideItem (Rect object, float touchX, float touchY) {
-        return object.contains((int) touchX, (int) touchY);
-    }
 
 }

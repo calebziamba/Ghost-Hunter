@@ -45,9 +45,6 @@ public class Player{
         int srcY = direction * height;
         Rect src = new Rect(srcX, srcY, srcX + width, srcY + height);
         Rect dst = new Rect(playerX, playerY, playerX + width, playerY + height);
-        Paint p = new Paint();
-        p.setColor(Color.GREEN);
-        c.drawRect(hitbox, p);
         c.drawBitmap(playerImage, src, dst, null);
     }
 
@@ -71,8 +68,8 @@ public class Player{
 
     public void moveDown() {
         this.playerY += PLAYER_SPEED;
-        if (playerY >= gameView.getHeight() - playerImage.getHeight())
-            this.playerY = gameView.getHeight() - playerImage.getHeight();
+        if (playerY >= gameView.getHeight() - height)
+            this.playerY = gameView.getHeight() - height;
         this.direction = 0;
         updateHitbox();
         currentFrame = ++currentFrame % BMP_COLUMNS;
@@ -80,8 +77,8 @@ public class Player{
 
     public void moveRight() {
         this.playerX += PLAYER_SPEED;
-        if (playerX >= gameView.getWidth() - playerImage.getWidth())
-            this.playerX = gameView.getWidth() - playerImage.getWidth();
+        if (playerX >= gameView.getWidth() - width)
+            this.playerX = gameView.getWidth() - width;
         this.direction = 2;
         updateHitbox();
         currentFrame = ++currentFrame % BMP_COLUMNS;
