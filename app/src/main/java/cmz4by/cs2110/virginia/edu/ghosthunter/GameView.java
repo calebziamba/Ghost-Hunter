@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -33,6 +34,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Rect wall5;
     private Rect wall6;
     private Rect wall7;
+    private Rect beginRoadblock;
+    private Rect stopRoadblock;
+    private Path playerPath;
 
     //button spaces
     private Rect quitSpace;
@@ -54,12 +58,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     private boolean buttonPressed = false;
     boolean spawnGhost = false;
+    private boolean drawingRoadblock = false;
 
     public GameView(Context context) {
         super(context);
         gameLoopThread = new GameLoopThread(this);
         holder = getHolder();
         holder.addCallback(this);
+        holder.setFixedSize(1080,1920);
 
         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.player_sprite_sheet);
         player = new Player(this, bmp);
@@ -70,20 +76,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         arrowRight = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_right_spear);
         quitGame = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_back_gun);
         pauseGame = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_right_gun);
-        wall1 = new Rect(800, 1200, 820, 1400);
-        wall2 = new Rect(0, 1500, 820, 1520);
-        wall3 = new Rect(200, 1000, 620, 1020);
-        wall4 = new Rect(350, 1210, 370, 1360);
-        wall5 = new Rect(275, 400, 295, 700);
-        wall6 = new Rect(660, 740, 1080, 760);
+        wall1 = new Rect(800, 1000, 820, 1300);
+        wall2 = new Rect(0, 1300, 820, 1320);
+        wall3 = new Rect(200, 800, 620, 820);
+        wall4 = new Rect(350, 1010, 370, 1160);
+        wall5 = new Rect(275, 200, 295, 500);
+        wall6 = new Rect(660, 540, 1080, 560);
         wall7 = new Rect(750, 150, 770, 350);
         //button spaces (each arrow is 100x100; the quit and pause buttons are 150x150
-        quitSpace = new Rect(20, 1730, 170, 1880);
-        pauseSpace = new Rect(910, 1730, 1060, 1880);
-        downSpace = new Rect (540, 1780 , 640, 1880 );
-        upSpace = new Rect (540, 1660, 640, 1760);
-        rightSpace = new Rect (660, 1720 , 760, 1820);
-        leftSpace = new Rect(430, 1720, 530, 1820);
+        quitSpace = new Rect(20, 1700, 170, 1850);
+        pauseSpace = new Rect(910, 1700, 1060, 1750);
+        downSpace = new Rect (540, 1750 , 640, 1850);
+        upSpace = new Rect (540, 1630, 640, 1730);
+        rightSpace = new Rect (660, 1690 , 760, 1790);
+        leftSpace = new Rect(420, 1690, 520, 1790);
+        //weapon buttons
+        beginRoadblock = new Rect(200,1400,300,1500);
+        stopRoadblock = new Rect(340,1400,440,1500);
+
+
+
 
     }
 //max X is 1080, max Y is 1535
@@ -103,8 +115,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setColor(Color.BLACK);
         c.drawColor(Color.RED);
 
+        Paint roadblockPaint = new Paint();
+        roadblockPaint.setColor(Color.BLUE);
+
         myPaint.setTextSize(80);
-        c.drawText("Score: " + score, 50, 200, myPaint);
+        c.drawText("Score: " + score, 20, 100, myPaint);
 
 
         //walls
@@ -124,6 +139,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawRect(rightSpace, myPaint);
         c.drawRect(leftSpace, myPaint);
 
+        //draw weapon buttons
+        c.drawRect(beginRoadblock,myPaint);
+        c.drawRect(stopRoadblock,myPaint);
+
 
 
         // use these in place of quite, pause, and arrowSpaces
@@ -134,7 +153,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         canvas.drawBitmap(arrowLeft, 550, 1750, null);
         canvas.drawBitmap(arrowRight, 610, 1750, null); */
 
-
+        while(drawingRoadblock){
+            playerPath = new Path();
+            playerPath.rLineTo(player.getPlayerX(), player.getPlayerY());
+            c.drawPath(playerPath,roadblockPaint);
+        }
         player.draw(c);
         if (this.score % 5 != 0) {
             spawnGhost = true;
@@ -157,6 +180,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             }
             ghost.draw(c);
         }
+
 
 
 
@@ -204,6 +228,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         return new Ghost(this,bmp);
     }
 
+
     public void gameOver(Canvas c, Paint myPaint) {
         gameLoopThread.setRunning(false);
         c.drawColor(Color.RED);
@@ -219,6 +244,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     // handles "button" presses
     @Override
     public boolean onTouchEvent (MotionEvent event) {
+        if(touchedInsideItem(beginRoadblock, event.getX(),event.getY())){
+           switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN :
+                    drawingRoadblock = true;
+            }
+        }
+
+        if(touchedInsideItem(stopRoadblock,event.getX(), event.getY())){
+            drawingRoadblock = false;
+        }
+
         if(touchedInsideItem(rightSpace, event.getX(), event.getY())) {
             buttonPressed = true;
             switch(event.getAction()) {
@@ -295,6 +331,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                                 startTime = System.currentTimeMillis();
 
                                 player.moveUp();
+
                                 sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
                                 try {
                                     if (sleepTime > 0)
