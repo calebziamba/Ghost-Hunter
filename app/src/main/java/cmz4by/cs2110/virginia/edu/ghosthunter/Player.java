@@ -3,6 +3,8 @@ package cmz4by.cs2110.virginia.edu.ghosthunter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
@@ -43,6 +45,9 @@ public class Player{
         int srcY = direction * height;
         Rect src = new Rect(srcX, srcY, srcX + width, srcY + height);
         Rect dst = new Rect(playerX, playerY, playerX + width, playerY + height);
+        Paint p = new Paint();
+        p.setColor(Color.GREEN);
+        c.drawRect(hitbox, p);
         c.drawBitmap(playerImage, src, dst, null);
     }
 

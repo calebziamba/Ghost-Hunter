@@ -12,6 +12,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -35,17 +36,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Rect wall7;
 
     //button spaces
-    private Rect quitSpace;
-    private Rect pauseSpace;
     private Rect upSpace;
+    private Rect leftSpace;
     private Rect downSpace;
     private Rect rightSpace;
-    private Rect leftSpace;
+    private Rect quitSpace;
 
     private Bitmap arrowUp;
     private Bitmap arrowDown;
     private Bitmap arrowRight;
     private Bitmap arrowLeft;
+    private Bitmap attackButton;
     private Bitmap quitGame;
     private Bitmap pauseGame;
 
@@ -64,12 +65,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.player_sprite_sheet);
         player = new Player(this, bmp);
 
-        arrowUp = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_back_spear);
-        arrowDown = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_front_spear);
-        arrowLeft = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_left_spear);
-        arrowRight = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_right_spear);
-        quitGame = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_back_gun);
-        pauseGame = BitmapFactory.decodeResource(getResources(), R.drawable.poliwag_right_gun);
+        arrowDown = BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow);
+        arrowUp = BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow);
+        arrowLeft = BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow);
+        arrowRight = BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow);
+        attackButton = BitmapFactory.decodeResource(getResources(), R.drawable.attack_button);
+
+        downSpace = new Rect(50, 100, 100, 200);
+        leftSpace = new Rect(this.getWidth() - 2 * arrowRight.getWidth() - attackButton.getWidth() - 5, this.getHeight() / 2,
+                                this.getWidth() - arrowRight.getWidth() - attackButton.getWidth() - 5, this.getHeight() / 2 + arrowLeft.getHeight());
+        rightSpace = new Rect(this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2,
+                                this.getWidth(), this.getHeight() / 2 + arrowRight.getHeight());
+        upSpace = new Rect(this.getWidth() - arrowRight.getWidth() - arrowDown.getWidth(), this.getHeight() / 2 - arrowUp.getHeight() - 5,
+                                this.getHeight() - arrowRight.getWidth(), this.getHeight() - 5);
+
+
         wall1 = new Rect(800, 1200, 820, 1400);
         wall2 = new Rect(0, 1500, 820, 1520);
         wall3 = new Rect(200, 1000, 620, 1020);
@@ -79,11 +89,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         wall7 = new Rect(750, 150, 770, 350);
         //button spaces (each arrow is 100x100; the quit and pause buttons are 150x150
         quitSpace = new Rect(20, 1730, 170, 1880);
-        pauseSpace = new Rect(910, 1730, 1060, 1880);
-        downSpace = new Rect (540, 1780 , 640, 1880 );
-        upSpace = new Rect (540, 1660, 640, 1760);
-        rightSpace = new Rect (660, 1720 , 760, 1820);
-        leftSpace = new Rect(430, 1720, 530, 1820);
 
     }
 //max X is 1080, max Y is 1535
@@ -116,15 +121,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawRect(wall6, myPaint);
         c.drawRect(wall7, myPaint);
 
+
+
         // spaces for buttons
-        c.drawRect(quitSpace, myPaint);
-        c.drawRect(pauseSpace, myPaint);
+  //      c.drawBitmap(arrowRight, this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2, myPaint);
+  //      c.drawBitmap(arrowDown, this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2 + arrowRight.getHeight(), myPaint);
+        c.drawBitmap(arrowLeft, this.getWidth() - 2 * arrowRight.getWidth() - attackButton.getWidth() - 5, this.getHeight() / 2, myPaint);
+        c.drawBitmap(arrowUp, this.getWidth() - arrowRight.getWidth() - arrowDown.getWidth(), this.getHeight() / 2 - arrowUp.getHeight() - 5, myPaint);
+        c.drawBitmap(attackButton, this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2, myPaint);
+
+        c.drawRect(leftSpace, myPaint);
+        c.drawRect(rightSpace, myPaint);
         c.drawRect(upSpace, myPaint);
         c.drawRect(downSpace, myPaint);
-        c.drawRect(rightSpace, myPaint);
-        c.drawRect(leftSpace, myPaint);
-
-
 
         // use these in place of quite, pause, and arrowSpaces
         /* canvas.drawBitmap(quitGame, 50, 1400, null);
@@ -143,6 +152,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
             spawnGhost = false;
         }
+
         for (int i = ghosts.size() - 1; i > 0; i--) {
             Ghost ghost = ghosts.get(i);
 
@@ -157,8 +167,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             }
             ghost.draw(c);
         }
-
-
 
     }
 
@@ -185,11 +193,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     }
-
-    public Player getPlayer() {
-        return player;
-    }
-
 
     private void createSprites() {
         ghosts.add(createSprite(R.drawable.ghostarray));
