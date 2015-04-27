@@ -4,6 +4,7 @@ package cmz4by.cs2110.virginia.edu.ghosthunter;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -20,18 +22,22 @@ import android.view.SurfaceView;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap bmp;
-    private SurfaceHolder holder;
     private GameLoopThread gameLoopThread;
-    private List<Ghost> ghosts = new ArrayList<Ghost>();
+    private List<Ghost> ghosts = new ArrayList<>();
     private List<Bomb> bombs = new ArrayList<Bomb>();
     private Player player;
 
-    private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+    private ArrayList<Projectile> projectiles = new ArrayList<>();
     private int ammo = 6;
     private int bombCount = 3;
 
     private int x = 0;
     private ArrayList<Wall> walls;
+
+    private ArrayList<Collectible> collectibles = new ArrayList<>();
+
+    private static float scaleWidth;
+    private static float scaleHeight;
 
     //button spaces
     private Rect upSpace;
@@ -62,7 +68,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     public GameView(Context context) {
         super(context);
         gameLoopThread = new GameLoopThread(this);
-        holder = getHolder();
+        SurfaceHolder holder = getHolder();
         holder.addCallback(this);
 
         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.player_sprite_sheet);
@@ -75,7 +81,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         attackButton = BitmapFactory.decodeResource(getResources(), R.drawable.attack_button);
 
         //button spaces (each arrow is 100x100; the quit and pause buttons are 150x150
-        quitSpace = new Rect(20, 926, 170, 1080);
+
 
         bmpBomb = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
         bmpExplosion = BitmapFactory.decodeResource(getResources(), R.drawable.explosion);
@@ -97,11 +103,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
         myPaint.setColor(Color.RED);
         myPaint.setTextSize(80);
-        c.drawText("Score: " + score, 50, 200, myPaint);
+        c.drawText("Score: " + score, 20, 100, myPaint);
         myPaint.setTextSize(50);
-        c.drawText("Ammo: " + ammo, 50, 280, myPaint);
+        c.drawText("Ammo: " + ammo, 20, 280, myPaint);
         myPaint.setTextSize(50);
-        c.drawText("Bombs: " + bombCount, 50, 320, myPaint);
+        c.drawText("Bombs: " + bombCount, 20, 320, myPaint);
+
 
         for (Wall wall: walls) {
             wall.draw(c, myPaint);
@@ -124,9 +131,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawBitmap(arrowUp, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight() - arrowUp.getHeight(), myPaint);
         c.drawBitmap(attackButton, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(), myPaint);
 
+
         c.drawRect(quitSpace, myPaint);
 
         player.draw(c);
+        spawnGun(c);
+
+        for (int i = collectibles.size() - 1; i > 0; i--) {
+            Collectible collectible = collectibles.get(i);
+            collectible.draw(c);
+            if (Rect.intersects(player.getHitbox(), collectible.getHitbox())) {
+                collectibles.remove(collectible);
+                ammo += 5;
+            }
+        }
+
         if (this.score % 5 != 0) {
             spawnGhost = true;
         }
@@ -187,8 +206,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     private void drawBackground(Canvas c, Paint myPaint) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.background);
-        c.drawBitmap(bmp, 0*1920/this.getWidth(), 0, myPaint);
 
+        float scaleHeight = (float) bmp.getHeight() / (float) getHeight();
+        float scaleWidth = (float) bmp.getWidth() / (float) getWidth();
+        int newWidth = Math.round((bmp.getWidth() / scaleWidth));
+        int newHeight = Math.round(bmp.getHeight() / scaleHeight);
+
+
+        c.drawBitmap(Bitmap.createScaledBitmap(bmp, newWidth, newHeight, true), 0, 0, myPaint);
     }
 
     @Override
@@ -211,6 +236,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         gameLoopThread.start();
 
         walls = Wall.createWalls(this);
+        scaleWidth = (float)this.getWidth() / 1080;
+        scaleHeight = (float)this.getHeight() / 1920;
+
         downSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight(),
                                 this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight());
         leftSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2 - arrowLeft.getWidth(), this.getHeight() - arrowDown.getHeight() - arrowLeft.getHeight(),
@@ -221,10 +249,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                                 this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight());
         attackSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(),
                                 this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight());
+        quitSpace = new Rect(Math.round(20 *scaleWidth), Math.round(1750*scaleHeight),Math.round( 170 * scaleWidth), Math.round(1900 * scaleHeight));
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    }
+
+    public void spawnGun(Canvas c) {
+        double rng = Math.random();
+        if (rng < 0.005) collectibles.add(new Collectible(BitmapFactory.decodeResource(getResources(), R.drawable.gun),
+                                            (int)(Math.random() * this.getWidth()), (int)(Math.random()*getHeight())));
     }
 
     private void createSprites() {
@@ -261,13 +296,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         gameLoopThread.setRunning(false);
         c.drawColor(Color.RED);
         myPaint.setColor(Color.BLACK);
-        myPaint.setTextSize(150);
+        myPaint.setTextSize(120);
         myPaint.setFakeBoldText(true);
-        c.drawText("GAME OVER", this.getWidth() / 6, this.getHeight() / 3, myPaint);
+        c.drawText("GAME OVER", this.getWidth() / 10, this.getHeight() / 3, myPaint);
         myPaint.setFakeBoldText(false);
-        myPaint.setTextSize(80);
-        c.drawText("Your score was: " + score, this.getWidth()/4, this.getHeight()/2, myPaint);
 
+        myPaint.setTextSize(60);
+        c.drawText("Your score was: " + score, this.getWidth()/ 7, this.getHeight()/2, myPaint);
     }
 
 
@@ -416,8 +451,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             }
 
         }
-        else if (attackSpace.contains((int) event.getX(), (int) event.getY()) && this.ammo > 0) {
-            Log.d("button", "attack!!");
+        else if (attackSpace.contains((int) event.getX(), (int) event.getY()) && this.ammo > 0 && event.getAction() == MotionEvent.ACTION_DOWN) {
             ammo -= 1;
             if (player.getDirection() == 0) {
                 bmp = BitmapFactory.decodeResource(getResources(), R.drawable.projectile_down);
@@ -434,6 +468,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         else if(quitSpace.contains((int) event.getX(), (int) event.getY())) {
             Intent intent = new Intent(this.getContext(), StartMenu.class);
             getContext().startActivity(intent);
+            gameLoopThread.setRunning(false);
             this.destroyDrawingCache();
         }
         return true;
