@@ -53,7 +53,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap arrowLeft;
     private Bitmap attackButton;
     private Bitmap quitGame;
-    private Bitmap pauseGame;
 
 
     private Bitmap bmpBomb;
@@ -64,6 +63,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     private boolean buttonPressed = false;
     boolean spawnGhost = false;
+    private boolean giveBombs = false;
+    private int counter = 0;
 
     public GameView(Context context) {
         super(context);
@@ -110,7 +111,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setTextSize(50);
         c.drawText("Bombs: " + bombCount, 20, 320, myPaint);
 
-
+        myPaint.setColor(Color.LTGRAY);
         for (Wall wall: walls) {
             wall.draw(c, myPaint);
         }
@@ -146,16 +147,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                 ammo += 5;
             }
         }
-
-        if (this.score % 5 != 0) {
+        counter++;
+        if (this.counter % 50 != 0) {
             spawnGhost = true;
         }
-        if (this.score % 5 == 0 && spawnGhost) {
+        if (this.counter % 50 == 0 && spawnGhost) {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
             spawnGhost = false;
         }
-        if (this.score % 50 == 0) {
+        if (this.counter % 50 != 0) {
+            giveBombs = true;
+        }
+        if (this.counter % 500 == 0 && this.counter != 0 && giveBombs) {
             bombCount += 1;
+            giveBombs = false;
         }
 
         for (int i = bombs.size() - 1; i >= 0; i--) {
@@ -163,8 +168,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         }
 
 
-        for (int i = bombs.size()-1; i > 0; i--) {
-            for (int j = ghosts.size()-1; j>0; j--) {
+        for (int i = bombs.size()-1; i >= 0; i--) {
+            for (int j = ghosts.size()-1; j>=0; j--) {
                 double radius = pythag(ghosts.get(j),bombs.get(i));
                 if (radius < 100) {
                     ghosts.remove(ghosts.get(j));
@@ -231,11 +236,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         }
     }
 
+    private boolean firstRun = true;
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        createSprites();
         gameLoopThread.setRunning(true);
-        gameLoopThread.start();
+        if (firstRun) {
+            createSprites();
+            firstRun = false;
+        }
+        if(gameLoopThread.getState() == Thread.State.NEW) {
+            gameLoopThread.start();
+        }
 
         walls = Wall.createWalls(this);
         scaleWidth = (float)this.getWidth() / 1080;
@@ -261,7 +272,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     public void spawnGun(Canvas c) {
         double rng = Math.random();
         if (rng < 0.005) collectibles.add(new Collectible(BitmapFactory.decodeResource(getResources(), R.drawable.gun),
-                                            (int)(Math.random() * this.getWidth()), (int)(Math.random()*getHeight())));
+                                            (int)(Math.random() * this.getWidth()),
+                                            (int)(Math.random()*getHeight() - 2*arrowDown.getHeight() - attackButton.getHeight())));
     }
 
     public void spawnLoot(int x, int y) {
@@ -320,13 +332,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
         float x = event.getX();
         float y = event.getY();
-        if (bombs.size() < 1) {
-            bombs.add(new Bomb(bombs, this, x, y, bmpBomb));
+        if (event.getAction() == MotionEvent.ACTION_DOWN){
+            if (bombs.size() < 1 && bombCount > 0) {
+                bombs.add(new Bomb(bombs, this, x, y, bmpBomb));
+                bombCount -= 1;
+            }
         }
-        if (bombCount > 0) {
-            bombCount -=1;
-        }
-
 
         if(event.getAction() == MotionEvent.ACTION_UP) {
             buttonPressed = false;
@@ -474,6 +485,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             return true;
         }
         else if(quitSpace.contains((int) event.getX(), (int) event.getY())) {
+
             Intent intent = new Intent(this.getContext(), StartMenu.class);
             getContext().startActivity(intent);
             gameLoopThread.setRunning(false);
@@ -484,5 +496,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     public ArrayList<Wall> getWalls() {
         return this.walls;
+    }
+
+    public Bitmap getArrowUp() {
+        return arrowUp;
+    }
+
+    public Bitmap getAttackButton() {
+        return attackButton;
+    }
+
+    public GameLoopThread getGameLoopThread() {
+        return gameLoopThread;
+    }
+
+    public void setGameLoopThread(GameLoopThread gameLoopThread) {
+        this.gameLoopThread = gameLoopThread;
     }
 }

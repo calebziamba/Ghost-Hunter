@@ -35,7 +35,7 @@ public class Ghost {
 
         Random rnd = new Random();
         x = rnd.nextInt(gameView.getWidth() - width);
-        y = rnd.nextInt(gameView.getHeight() - height);
+        y = rnd.nextInt(gameView.getHeight() - height - gameView.getArrowUp().getHeight()*2 - gameView.getAttackButton().getHeight());
         xSpeed = rnd.nextInt(MAX_SPEED * 2) - MAX_SPEED;
         ySpeed = rnd.nextInt(MAX_SPEED * 2) - MAX_SPEED;
 
@@ -72,7 +72,8 @@ public class Ghost {
             xSpeed = -xSpeed;
         }
         x = x + xSpeed;
-        if (y >= gameView.getHeight() - height - ySpeed || y + ySpeed <= 0) {
+        if (y >= gameView.getHeight() - height - ySpeed - gameView.getArrowUp().getHeight()*2 - gameView.getAttackButton().getHeight()
+                || y + ySpeed <= 0) {
             ySpeed = -ySpeed;
         }
         y = y + ySpeed;

@@ -89,8 +89,8 @@ public class Player{
         this.playerY += PLAYER_SPEED;
 
 
-        if (playerY >= gameView.getHeight() - height)
-            this.playerY = gameView.getHeight() - height;
+        if (playerY >= gameView.getHeight() - height - gameView.getArrowUp().getHeight()*2 - gameView.getAttackButton().getHeight())
+            this.playerY = gameView.getHeight() - height- gameView.getArrowUp().getHeight()*2 - gameView.getAttackButton().getHeight();
 
         this.direction = 0;
         updateHitbox();

@@ -53,6 +53,36 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        gameView.getGameLoopThread().setRunning(false);
+        media.pause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        gameView.getGameLoopThread().setRunning(true);
+        setContentView(gameView);
+        try {
+            gameView.getGameLoopThread().join();
+        } catch (InterruptedException e) {
+        }
+        media.start();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        gameView.setGameLoopThread(new GameLoopThread(gameView));
+        setContentView(gameView);
+        try {
+            gameView.getGameLoopThread().join();
+        } catch (InterruptedException e) {
+        }
+    }
 }
 
 
