@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.Log;
@@ -23,17 +22,18 @@ import android.view.SurfaceView;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap bmp;
-    private SurfaceHolder holder;
     private GameLoopThread gameLoopThread;
-    private List<Ghost> ghosts = new ArrayList<Ghost>();
+    private List<Ghost> ghosts = new ArrayList<>();
+    private List<Bomb> bombs = new ArrayList<Bomb>();
     private Player player;
-    private Canvas canvas;
 
-    private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+    private ArrayList<Projectile> projectiles = new ArrayList<>();
     private int ammo = 6;
 
     private int x = 0;
     private ArrayList<Wall> walls;
+
+    private ArrayList<Collectible> collectibles = new ArrayList<>();
 
     private static float scaleWidth;
     private static float scaleHeight;
@@ -45,7 +45,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Rect rightSpace;
     private Rect quitSpace;
     private Rect attackSpace;
-    private Rect barrierSpace;
 
     private Bitmap arrowUp;
     private Bitmap arrowDown;
@@ -55,19 +54,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap quitGame;
     private Bitmap pauseGame;
 
+
+    private Bitmap bmpBomb;
+    private Bitmap bmpExplosion;
     int score = 0;
+
     private Context context;
 
     private boolean buttonPressed = false;
     boolean spawnGhost = false;
-    private boolean canDrawBarrier = false;
-
-    private Path path;
 
     public GameView(Context context) {
         super(context);
         gameLoopThread = new GameLoopThread(this);
-        holder = getHolder();
+        SurfaceHolder holder = getHolder();
         holder.addCallback(this);
 
         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.player_sprite_sheet);
@@ -82,6 +82,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         //button spaces (each arrow is 100x100; the quit and pause buttons are 150x150
 
 
+        bmpBomb = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
+        bmpExplosion = BitmapFactory.decodeResource(getResources(), R.drawable.explosion);
     }
 //max X is 1080, max Y is 1535
 
@@ -94,7 +96,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     }
     @Override
     public void draw(Canvas c) {
-        canvas = c;
 
         Paint myPaint = new Paint();
         drawBackground(c, myPaint);
@@ -105,17 +106,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setTextSize(50);
         c.drawText("Ammo: " + ammo, 20, 180, myPaint);
 
-
-
-        if (barrierSpace.contains(player.getPlayerX(), player.getPlayerY())){
-            canDrawBarrier = true;
-        }
-
         for (Wall wall: walls) {
             wall.draw(c, myPaint);
         }
 
-        for(int i = projectiles.size() - 1; i > 0; i--) {
+        for(int i = projectiles.size() - 1; i >= 0; i--) {
             Projectile p = projectiles.get(i);
             if (p.getX() > this.getWidth() || p.getX() < 0 - p.getBmp().getWidth()) {
                 projectiles.remove(p);
@@ -132,16 +127,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawBitmap(arrowUp, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight() - arrowUp.getHeight(), myPaint);
         c.drawBitmap(attackButton, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(), myPaint);
 
-        Paint topRight = new Paint();
-        topRight.setColor(Color.BLUE);
-        topRight.setStyle(Paint.Style.STROKE);
-        topRight.setStrokeWidth(20);
 
         c.drawRect(quitSpace, myPaint);
-        c.drawRect(barrierSpace, topRight);
 
         player.draw(c);
+        spawnGun(c);
 
+        for (int i = collectibles.size() - 1; i >= 0; i--) {
+            Collectible collectible = collectibles.get(i);
+            collectible.draw(c);
+            if (Rect.intersects(player.getHitbox(), collectible.getHitbox())) {
+                collectibles.remove(collectible);
+                ammo += 5;
+            }
+        }
 
         if (this.score % 5 != 0) {
             spawnGhost = true;
@@ -149,6 +148,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         if (this.score % 5 == 0 && spawnGhost) {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
             spawnGhost = false;
+
+        }
+//        if (dropBomb) {
+//            for (int i = bombs.size() - 1; i >= 0; i--) {
+//                bombs.get(i).drawBomb(c);
+//            }
+//        }
+        for (int i = bombs.size() - 1; i >= 0; i--) {
+            bombs.get(i).drawBomb(c);
+        }
+
+
+        for (int i = bombs.size()-1; i > 0; i--) {
+            for (int j = ghosts.size()-1; j>0; j--) {
+                double radius = pythag(ghosts.get(j),bombs.get(i));
+                if (radius < 100) {
+                    ghosts.remove(ghosts.get(j));
+                    bombs.get(i).changeImage(bmpExplosion);
+                    bombs.get(i).changeLife(3);
+                }
+            }
         }
 
         for (int i = ghosts.size() - 1; i > 0; i--) {
@@ -169,20 +189,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                         Rect.intersects(p.getHitbox(), ghost.getHitboxBack())) {
                     projectiles.remove(p);
                     ghosts.remove(ghost);
+                    score += 5;
                 }
             }
+
             ghost.draw(c);
         }
 
     }
 
-    private void drawBarrier(Canvas c, Paint barrierPaint){
-        c.drawPath(path, barrierPaint);
-    }
-
 
     private void drawBackground(Canvas c, Paint myPaint) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+
         float scaleHeight = (float) bmp.getHeight() / (float) getHeight();
         float scaleWidth = (float) bmp.getWidth() / (float) getWidth();
         int newWidth = Math.round((bmp.getWidth() / scaleWidth));
@@ -226,11 +245,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         attackSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(),
                                 this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight());
         quitSpace = new Rect(Math.round(20 *scaleWidth), Math.round(1750*scaleHeight),Math.round( 170 * scaleWidth), Math.round(1900 * scaleHeight));
-        barrierSpace = new Rect(this.getWidth() - Math.round(20 *scaleWidth) - Math.round(100*scaleWidth), Math.round(20*scaleHeight), this.getWidth() - Math.round(20 *scaleWidth), Math.round(20*scaleHeight) + Math.round(100*scaleHeight));
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    }
+
+    public void spawnGun(Canvas c) {
+        double rng = Math.random();
+        if (rng < 0.005) collectibles.add(new Collectible(BitmapFactory.decodeResource(getResources(), R.drawable.gun),
+                                            (int)(Math.random() * this.getWidth()), (int)(Math.random()*getHeight())));
     }
 
     private void createSprites() {
@@ -241,11 +265,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         ghosts.add(createSprite(R.drawable.ghostarray));
     }
 
+//    private void createBombs() {
+//        bombs.add(createBomb(R.drawable.bomb));
+//    }
+
+    //new constructor, attempting to make bombs show up on click
+//    private Bomb createBomb(int resource) {
+//        Bitmap bmpBomb = BitmapFactory.decodeResource(getResources(), resource);
+//        return new Bomb(this,bmpBomb);
+//    }
+
     private Ghost createSprite(int resource) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), resource);
         return new Ghost(this,bmp);
     }
 
+
+    public double pythag(Ghost g, Bomb b) {
+        double xdist = g.getX() - b.getX();
+        double ydist = g.getY() - b.getY();
+        double radius = Math.sqrt((Math.pow(xdist, 2)) + (Math.pow(ydist, 2)));
+        return radius;
+    }
     public void gameOver(Canvas c, Paint myPaint) {
         gameLoopThread.setRunning(false);
         c.drawColor(Color.RED);
@@ -254,71 +295,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setFakeBoldText(true);
         c.drawText("GAME OVER", this.getWidth() / 10, this.getHeight() / 3, myPaint);
         myPaint.setFakeBoldText(false);
+
         myPaint.setTextSize(60);
         c.drawText("Your score was: " + score, this.getWidth()/ 7, this.getHeight()/2, myPaint);
     }
-    private float mX, mY;
-    private static final float TOUCH_TOLERANCE = 4;
 
-    private void touch_start(float x, float y) {
-//showDialog();
-        path.reset();
-        path.moveTo(x, y);
-        mX = x;
-        mY = y;
-
-    }
-    private void touch_move(float x, float y) {
-        float dx = Math.abs(x - mX);
-        float dy = Math.abs(y - mY);
-        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            path.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-            mX = x;
-            mY = y;
-        }
-    }
-    private void touch_up() {
-        Paint barrierPaint = new Paint();
-        barrierPaint.setColor(Color.BLUE);
-        path.lineTo(mX, mY);
-// commit the path to our offscreen
-        canvas.drawPath(path, barrierPaint);
-// kill this so we don't double draw
-        path.reset();
-    }
 
     // handles "button" presses
     @Override
     public boolean onTouchEvent (MotionEvent event) {
 
-        if (canDrawBarrier) {
-            float x = event.getX();
-            float y = event.getY();
-            switch(event.getAction()) {
-                case MotionEvent.ACTION_DOWN :
-                   touch_start(x,y);
-                   invalidate();
-                    break;
-
-                case MotionEvent.ACTION_MOVE :
-                    touch_move(x,y);
-                    invalidate();
-                    break;
-
-                case MotionEvent.ACTION_UP :
-                    touch_up();
-                    invalidate();
-                    break;
-            }
-            return true;
-
-            }
+        float x = event.getX();
+        float y = event.getY();
+        bombs.add(new Bomb(bombs, this, x, y, bmpBomb));
 
         if(event.getAction() == MotionEvent.ACTION_UP) {
             buttonPressed = false;
             return true;
         }
         if(rightSpace.contains((int) event.getX(), (int) event.getY())) {
+
             buttonPressed = true;
             switch(event.getAction()) {
                 case MotionEvent.ACTION_DOWN :
@@ -444,8 +440,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             }
 
         }
-        else if (attackSpace.contains((int) event.getX(), (int) event.getY()) && this.ammo > 0) {
-            Log.d("button", "attack!!");
+        else if (attackSpace.contains((int) event.getX(), (int) event.getY()) && this.ammo > 0 && event.getAction() == MotionEvent.ACTION_DOWN) {
             ammo -= 1;
             if (player.getDirection() == 0) {
                 bmp = BitmapFactory.decodeResource(getResources(), R.drawable.projectile_down);
@@ -462,10 +457,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         else if(quitSpace.contains((int) event.getX(), (int) event.getY())) {
             Intent intent = new Intent(this.getContext(), StartMenu.class);
             getContext().startActivity(intent);
+            gameLoopThread.setRunning(false);
             this.destroyDrawingCache();
         }
         return true;
     }
 
-
+    public ArrayList<Wall> getWalls() {
+        return this.walls;
+    }
 }
