@@ -8,8 +8,7 @@ public class Bomb {
     private float x;
     private float y;
     private Bitmap bmp;
-
-
+    private int count;
     private int life = 10;
     private List<Bomb> bombs;
 

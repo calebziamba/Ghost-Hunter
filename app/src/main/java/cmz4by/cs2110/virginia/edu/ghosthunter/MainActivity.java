@@ -1,6 +1,7 @@
 package cmz4by.cs2110.virginia.edu.ghosthunter;
 
 
+import android.media.MediaPlayer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Layout;
@@ -13,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.media.MediaPlayer;
 
 
 
@@ -20,6 +22,7 @@ public class MainActivity extends ActionBarActivity {
 
     private GameView gameView;
     private Player player;
+    private MediaPlayer media;
 
 
     @Override
@@ -31,7 +34,9 @@ public class MainActivity extends ActionBarActivity {
 
         gameView = new GameView(this);
         setContentView(gameView);
-
+        media = MediaPlayer.create(this, R.raw.graveyard);
+        media.start();
+        media.setLooping(true);
     }
 
     @Override

@@ -29,6 +29,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     private ArrayList<Projectile> projectiles = new ArrayList<>();
     private int ammo = 6;
+    private int bombCount = 3;
 
     private int x = 0;
     private ArrayList<Wall> walls;
@@ -104,7 +105,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setTextSize(80);
         c.drawText("Score: " + score, 20, 100, myPaint);
         myPaint.setTextSize(50);
-        c.drawText("Ammo: " + ammo, 20, 180, myPaint);
+        c.drawText("Ammo: " + ammo, 20, 280, myPaint);
+        myPaint.setTextSize(50);
+        c.drawText("Bombs: " + bombCount, 20, 320, myPaint);
+
 
         for (Wall wall: walls) {
             wall.draw(c, myPaint);
@@ -148,7 +152,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         if (this.score % 5 == 0 && spawnGhost) {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
             spawnGhost = false;
-
+        }
+        if (this.score % 50 == 0) {
+            bombCount += 1;
         }
 
         for (int i = bombs.size() - 1; i >= 0; i--) {
@@ -312,7 +318,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
         float x = event.getX();
         float y = event.getY();
-        bombs.add(new Bomb(bombs, this, x, y, bmpBomb));
+        if (bombs.size() < 1) {
+            bombs.add(new Bomb(bombs, this, x, y, bmpBomb));
+        }
+        if (bombCount > 0) {
+            bombCount -=1;
+        }
+
 
         if(event.getAction() == MotionEvent.ACTION_UP) {
             buttonPressed = false;
