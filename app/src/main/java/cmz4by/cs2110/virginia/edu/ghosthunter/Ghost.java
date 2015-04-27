@@ -69,6 +69,7 @@ public class Ghost {
         y = y + ySpeed;
         currentFrame = ++currentFrame % BMP_COLUMNS;
        updateHitboxes();
+
     }
 
     private void updateHitboxes() {

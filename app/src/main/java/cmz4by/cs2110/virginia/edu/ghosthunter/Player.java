@@ -57,28 +57,30 @@ public class Player{
     public void moveUp() {
         walls = gameView.getWalls();
         this.playerY -= PLAYER_SPEED;
-        for(Wall wall : walls) {
-            if (Rect.intersects(hitbox, wall.getRect()))
-                this.playerY = wall.getRect().bottom;
-        }
+
         if (playerY <= 0)
             this.playerY = 0;
         this.direction = 3;
         updateHitbox();
+        for(Wall wall : walls) {
+            if (Rect.intersects(hitbox, wall.getRect()))
+                this.playerY = wall.getRect().bottom;
+        }
         currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 
     public void moveLeft() {
         walls = gameView.getWalls();
         this.playerX -= PLAYER_SPEED;
-        for(Wall wall : walls) {
-            if (Rect.intersects(hitbox, wall.getRect()))
-                this.playerY = wall.getRect().right;
-        }
+
         if (playerX <= 0)
             this.playerX = 0;
         this.direction = 1;
         updateHitbox();
+        for(Wall wall : walls) {
+            if (Rect.intersects(hitbox, wall.getRect()))
+                this.playerX = wall.getRect().right;
+        }
         currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 
@@ -86,29 +88,31 @@ public class Player{
         walls = gameView.getWalls();
         this.playerY += PLAYER_SPEED;
 
-        for(Wall wall :walls) {
-            if (Rect.intersects(hitbox, wall.getRect()))
-                this.playerY = wall.getRect().top - height;
-        }
+
         if (playerY >= gameView.getHeight() - height)
             this.playerY = gameView.getHeight() - height;
 
         this.direction = 0;
         updateHitbox();
+        for(Wall wall :walls) {
+            if (Rect.intersects(hitbox, wall.getRect()))
+                this.playerY = wall.getRect().top - height;
+        }
         currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 
     public void moveRight() {
         walls = gameView.getWalls();
         this.playerX += PLAYER_SPEED;
-        for(Wall wall :walls) {
-            if (Rect.intersects(hitbox, wall.getRect()))
-                this.playerX = wall.getRect().left;
-        }
+
         if (playerX >= gameView.getWidth() - width)
             this.playerX = gameView.getWidth() - width;
         this.direction = 2;
         updateHitbox();
+        for(Wall wall :walls) {
+            if (Rect.intersects(hitbox, wall.getRect()))
+                this.playerX = wall.getRect().left - width;
+        }
         currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 

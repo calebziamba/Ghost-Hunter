@@ -150,11 +150,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             spawnGhost = false;
 
         }
-//        if (dropBomb) {
-//            for (int i = bombs.size() - 1; i >= 0; i--) {
-//                bombs.get(i).drawBomb(c);
-//            }
-//        }
+
         for (int i = bombs.size() - 1; i >= 0; i--) {
             bombs.get(i).drawBomb(c);
         }
@@ -167,15 +163,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                     ghosts.remove(ghosts.get(j));
                     bombs.get(i).changeImage(bmpExplosion);
                     bombs.get(i).changeLife(3);
+                    score += 5;
                 }
             }
         }
 
-        for (int i = ghosts.size() - 1; i > 0; i--) {
+        for (int i = ghosts.size() - 1; i >= 0; i--) {
             Ghost ghost = ghosts.get(i);
 
             // check for if player and ghosts collide
             if (Rect.intersects(player.getHitbox(), ghost.getHitboxBack())) {
+                spawnLoot(ghost.getX(), ghost.getY());
                 ghosts.remove(i); // kill
                 this.score += 5;
             }
@@ -183,13 +181,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                 gameOver(c, myPaint);
                 return;
             }
-            for (int j = projectiles.size() - 1; j > 0; j--) {
+            for (int j = projectiles.size() - 1; j >= 0; j--) {
                 Projectile p = projectiles.get(j);
                 if (Rect.intersects(p.getHitbox(), ghost.getHitboxFront()) ||
                         Rect.intersects(p.getHitbox(), ghost.getHitboxBack())) {
                     projectiles.remove(p);
+                    spawnLoot(ghost.getX(), ghost.getY());
                     ghosts.remove(ghost);
                     score += 5;
+
                 }
             }
 
@@ -255,6 +255,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         double rng = Math.random();
         if (rng < 0.005) collectibles.add(new Collectible(BitmapFactory.decodeResource(getResources(), R.drawable.gun),
                                             (int)(Math.random() * this.getWidth()), (int)(Math.random()*getHeight())));
+    }
+
+    public void spawnLoot(int x, int y) {
+        double rng = Math.random();
+        if (rng < 0.1) collectibles.add(new Collectible(BitmapFactory.decodeResource(getResources(), R.drawable.gun), x, y));
     }
 
     private void createSprites() {
