@@ -66,11 +66,6 @@ public class MainActivity extends ActionBarActivity {
         super.onResume();
         gameView.getGameLoopThread().setRunning(true);
         setContentView(gameView);
-        try {
-            gameView.getGameLoopThread().join();
-        } catch (InterruptedException e) {
-        }
-        media.start();
     }
 
     @Override
@@ -78,10 +73,7 @@ public class MainActivity extends ActionBarActivity {
         super.onRestart();
         gameView.setGameLoopThread(new GameLoopThread(gameView));
         setContentView(gameView);
-        try {
-            gameView.getGameLoopThread().join();
-        } catch (InterruptedException e) {
-        }
+        media.start();
     }
 }
 
