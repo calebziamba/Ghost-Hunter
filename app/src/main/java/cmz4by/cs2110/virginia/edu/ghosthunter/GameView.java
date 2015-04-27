@@ -12,12 +12,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
@@ -27,14 +25,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private List<Ghost> ghosts = new ArrayList<Ghost>();
     private Player player;
 
+    private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+    private int ammo = 6;
+
     private int x = 0;
-    private Rect wall1;
-    private Rect wall2;
-    private Rect wall3;
-    private Rect wall4;
-    private Rect wall5;
-    private Rect wall6;
-    private Rect wall7;
+    private ArrayList<Wall> walls;
 
     //button spaces
     private Rect upSpace;
@@ -52,7 +47,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap quitGame;
     private Bitmap pauseGame;
 
-    long score = 0;
+    int score = 0;
     private Context context;
 
     private boolean buttonPressed = false;
@@ -73,57 +68,53 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         arrowRight = BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow);
         attackButton = BitmapFactory.decodeResource(getResources(), R.drawable.attack_button);
 
-
-
-        wall1 = new Rect(800, 1200, 820, 1400);
-        wall2 = new Rect(0, 1500, 820, 1520);
-        wall3 = new Rect(200, 1000, 620, 1020);
-        wall4 = new Rect(350, 1210, 370, 1360);
-        wall5 = new Rect(275, 400, 295, 700);
-        wall6 = new Rect(660, 740, 1080, 760);
-        wall7 = new Rect(750, 150, 770, 350);
         //button spaces (each arrow is 100x100; the quit and pause buttons are 150x150
-        quitSpace = new Rect(20, 1730, 170, 1880);
+        quitSpace = new Rect(20, 926, 170, 1080);
 
     }
 //max X is 1080, max Y is 1535
 
-    public long getScore() {
+    public int getScore() {
         return this.score;
     }
 
-    public void increaseScore(long sc){
+    public void increaseScore(int sc){
         score = sc;
     }
     @Override
     public void draw(Canvas c) {
 
         Paint myPaint = new Paint();
-        myPaint.setTextSize(200);
-        myPaint.setColor(Color.BLACK);
-        c.drawColor(Color.RED);
+        drawBackground(c, myPaint);
 
+        myPaint.setColor(Color.RED);
         myPaint.setTextSize(80);
         c.drawText("Score: " + score, 50, 200, myPaint);
+        myPaint.setTextSize(50);
+        c.drawText("Ammo: " + ammo, 50, 280, myPaint);
 
+        for (Wall wall: walls) {
+            wall.draw(c, myPaint);
+        }
 
-        //walls
-        c.drawRect(wall1, myPaint);
-        c.drawRect(wall2, myPaint);
-        c.drawRect(wall3, myPaint);
-        c.drawRect(wall4, myPaint);
-        c.drawRect(wall5, myPaint);
-        c.drawRect(wall6, myPaint);
-        c.drawRect(wall7, myPaint);
+        for(int i = projectiles.size() - 1; i > 0; i--) {
+            Projectile p = projectiles.get(i);
+            if (p.getX() > this.getWidth() || p.getX() < 0 - p.getBmp().getWidth()) {
+                projectiles.remove(p);
+            } else if (p.getY() > this.getHeight() || p.getY() < 0 - p.getBmp().getHeight()){
+                projectiles.remove(p);
+            }
+            p.draw(c);
+        }
 
-
-        Log.d("size", "screen width is: " + this.getWidth() + "\n and height is: " + this.getHeight());
         // spaces for buttons
-        c.drawBitmap(arrowRight, this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2, myPaint);
-        c.drawBitmap(arrowDown, this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2 + arrowRight.getHeight(), myPaint);
-        c.drawBitmap(arrowLeft, this.getWidth() - 2 * arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2, myPaint);
-        c.drawBitmap(arrowUp, this.getWidth() - arrowRight.getWidth() - arrowDown.getWidth(), this.getHeight() / 2 - arrowUp.getHeight(), myPaint);
-        c.drawBitmap(attackButton, this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2, myPaint);
+        c.drawBitmap(arrowRight, this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - arrowRight.getHeight(), myPaint);
+        c.drawBitmap(arrowDown, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight(), myPaint);
+        c.drawBitmap(arrowLeft, this.getWidth()/2 - attackButton.getWidth()/2 - arrowRight.getWidth(), this.getHeight() - arrowDown.getHeight() - arrowLeft.getHeight(), myPaint);
+        c.drawBitmap(arrowUp, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight() - arrowUp.getHeight(), myPaint);
+        c.drawBitmap(attackButton, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(), myPaint);
+
+        c.drawRect(quitSpace, myPaint);
 
         player.draw(c);
         if (this.score % 5 != 0) {
@@ -146,9 +137,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                 gameOver(c, myPaint);
                 return;
             }
+            for (int j = projectiles.size() - 1; j > 0; j--) {
+                Projectile p = projectiles.get(j);
+                if (Rect.intersects(p.getHitbox(), ghost.getHitboxFront()) ||
+                        Rect.intersects(p.getHitbox(), ghost.getHitboxBack())) {
+                    projectiles.remove(p);
+                    ghosts.remove(ghost);
+                }
+            }
             ghost.draw(c);
         }
 
+    }
+
+    private void drawBackground(Canvas c, Paint myPaint) {
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+        c.drawBitmap(bmp, 0*1920/this.getWidth(), 0, myPaint);
     }
 
     @Override
@@ -170,18 +174,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         gameLoopThread.setRunning(true);
         gameLoopThread.start();
 
-
-        downSpace = new Rect(this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2 + arrowRight.getHeight(),
-                                this.getWidth() - arrowRight.getWidth() - attackButton.getWidth() + arrowDown.getWidth(),
-                                this.getHeight() / 2 + arrowRight.getHeight() + arrowDown.getHeight());
-        leftSpace = new Rect(this.getWidth() - 2 * arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2,
-                                this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight() / 2 + arrowLeft.getHeight());
-        rightSpace = new Rect(this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2,
-                                this.getWidth(), this.getHeight() / 2 + arrowRight.getHeight());
-        upSpace = new Rect(this.getWidth() - arrowRight.getWidth() - arrowDown.getWidth(), this.getHeight() / 2 - arrowUp.getHeight(),
-                                this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2);
-        attackSpace = new Rect(this.getWidth() - arrowRight.getWidth() - attackButton.getWidth(), this.getHeight()/2,
-                                    this.getWidth() - arrowRight.getWidth(), this.getHeight() / 2 + attackButton.getHeight());
+        walls = Wall.createWalls(this);
+        downSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight(),
+                                this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight());
+        leftSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2 - arrowLeft.getWidth(), this.getHeight() - arrowDown.getHeight() - arrowLeft.getHeight(),
+                                this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight());
+        rightSpace = new Rect(this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - arrowRight.getHeight(),
+                                this.getWidth()/2 + attackButton.getWidth()/2 + arrowRight.getWidth(), this.getHeight() - arrowDown.getHeight());
+        upSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight() - arrowUp.getHeight(),
+                                this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight());
+        attackSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(),
+                                this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight());
     }
 
     @Override
@@ -204,6 +207,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     public void gameOver(Canvas c, Paint myPaint) {
         gameLoopThread.setRunning(false);
         c.drawColor(Color.RED);
+        myPaint.setColor(Color.BLACK);
         myPaint.setTextSize(150);
         myPaint.setFakeBoldText(true);
         c.drawText("GAME OVER", this.getWidth() / 6, this.getHeight() / 3, myPaint);
@@ -216,6 +220,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     // handles "button" presses
     @Override
     public boolean onTouchEvent (MotionEvent event) {
+        if(event.getAction() == MotionEvent.ACTION_UP) {
+            buttonPressed = false;
+            return true;
+        }
         if(rightSpace.contains((int) event.getX(), (int) event.getY())) {
             buttonPressed = true;
             switch(event.getAction()) {
@@ -342,8 +350,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             }
 
         }
-        else if (attackSpace.contains((int) event.getX(), (int) event.getY())) {
+        else if (attackSpace.contains((int) event.getX(), (int) event.getY()) && this.ammo > 0) {
             Log.d("button", "attack!!");
+            ammo -= 1;
+            if (player.getDirection() == 0) {
+                bmp = BitmapFactory.decodeResource(getResources(), R.drawable.projectile_down);
+            } else if (player.getDirection() == 1) {
+                bmp = BitmapFactory.decodeResource(getResources(), R.drawable.projectile_left);
+            } else if (player.getDirection() == 2) {
+                bmp = BitmapFactory.decodeResource(getResources(), R.drawable.projectile_right);
+            } else if (player.getDirection() == 3) {
+                bmp = BitmapFactory.decodeResource(getResources(), R.drawable.projectile_up);
+            }
+            projectiles.add(new Projectile(bmp, player));
+            return true;
         }
         else if(quitSpace.contains((int) event.getX(), (int) event.getY())) {
             Intent intent = new Intent(this.getContext(), StartMenu.class);
