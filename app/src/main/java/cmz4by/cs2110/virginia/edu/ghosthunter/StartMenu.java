@@ -40,6 +40,9 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
         // Get the view ID of the play button and set an onClick listener
         // Tell the app what to do when Play Button Clicked
         mPlayButton = (Button) findViewById(R.id.play);
+        mySound = MediaPlayer.create(this, R.raw.graveyard);
+        mySound.start();
+        mySound.setLooping(true);
 
         // Get the view ID of the view highscore and set an onClick listener
         mViewScoreButton = (Button) findViewById(R.id.viewhighscore);
@@ -76,7 +79,6 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
                 Log.i(TAG, "calling onClick() on Settings button");
                 int a = 2;
                 goBack(a);
-                toggleSound();
             }
         });
     }

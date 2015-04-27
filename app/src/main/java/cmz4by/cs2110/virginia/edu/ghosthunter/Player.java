@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 /**
  * Created by Caleb on 4/13/2015.
  */
@@ -26,6 +28,8 @@ public class Player{
     private int currentFrame;
     private int direction; // 0 down, 1 left, 2 right, 3 up
 
+    private ArrayList<Wall> walls;
+
 
     public Player(GameView v, Bitmap b) {
         this.gameView = v;
@@ -38,6 +42,8 @@ public class Player{
         this.playerX = 700;
         this.playerY = 700;
         this.hitbox = new Rect(playerX, playerY, playerX + width, playerY + height);
+
+
     }
 
     public void draw(Canvas c) {
@@ -49,38 +55,64 @@ public class Player{
     }
 
     public void moveUp() {
+        walls = gameView.getWalls();
         this.playerY -= PLAYER_SPEED;
+
         if (playerY <= 0)
             this.playerY = 0;
         this.direction = 3;
         updateHitbox();
+        for(Wall wall : walls) {
+            if (Rect.intersects(hitbox, wall.getRect()))
+                this.playerY = wall.getRect().bottom;
+        }
         currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 
     public void moveLeft() {
+        walls = gameView.getWalls();
         this.playerX -= PLAYER_SPEED;
+
         if (playerX <= 0)
             this.playerX = 0;
         this.direction = 1;
         updateHitbox();
+        for(Wall wall : walls) {
+            if (Rect.intersects(hitbox, wall.getRect()))
+                this.playerX = wall.getRect().right;
+        }
         currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 
     public void moveDown() {
+        walls = gameView.getWalls();
         this.playerY += PLAYER_SPEED;
+
+
         if (playerY >= gameView.getHeight() - height)
             this.playerY = gameView.getHeight() - height;
+
         this.direction = 0;
         updateHitbox();
+        for(Wall wall :walls) {
+            if (Rect.intersects(hitbox, wall.getRect()))
+                this.playerY = wall.getRect().top - height;
+        }
         currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 
     public void moveRight() {
+        walls = gameView.getWalls();
         this.playerX += PLAYER_SPEED;
+
         if (playerX >= gameView.getWidth() - width)
             this.playerX = gameView.getWidth() - width;
         this.direction = 2;
         updateHitbox();
+        for(Wall wall :walls) {
+            if (Rect.intersects(hitbox, wall.getRect()))
+                this.playerX = wall.getRect().left - width;
+        }
         currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 

@@ -45,4 +45,8 @@ public class Wall {
     public void draw(Canvas c, Paint paint) {
         c.drawRect(rect, paint);
     }
+
+    public Rect getRect() {
+        return rect;
+    }
 }

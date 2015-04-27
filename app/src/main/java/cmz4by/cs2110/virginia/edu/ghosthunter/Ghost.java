@@ -25,6 +25,7 @@ public class Ghost {
     private int height;
     private Rect hitboxFront;
     private Rect hitboxBack;
+    private int counter = 0;
 
     public Ghost(GameView gameView, Bitmap bmp) {
         this.width = bmp.getWidth() / BMP_COLUMNS;
@@ -59,6 +60,14 @@ public class Ghost {
     }
 
     private void update() {
+        if (counter < 250) {
+            counter++;
+        } else if (counter >= 250) {
+            xSpeed = 3*xSpeed;
+            ySpeed = 3*ySpeed;
+            counter = 0;
+        }
+
         if (x >= gameView.getWidth() - width - xSpeed || x + xSpeed <= 0) {
             xSpeed = -xSpeed;
         }
@@ -69,6 +78,7 @@ public class Ghost {
         y = y + ySpeed;
         currentFrame = ++currentFrame % BMP_COLUMNS;
        updateHitboxes();
+
     }
 
     private void updateHitboxes() {
