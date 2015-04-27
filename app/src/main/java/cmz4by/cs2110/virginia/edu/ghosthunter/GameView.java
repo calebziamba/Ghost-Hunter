@@ -23,6 +23,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private SurfaceHolder holder;
     private GameLoopThread gameLoopThread;
     private List<Ghost> ghosts = new ArrayList<Ghost>();
+    private List<Bomb> bombs = new ArrayList<Bomb>();
     private Player player;
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
@@ -47,7 +48,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap quitGame;
     private Bitmap pauseGame;
 
+
+    private Bitmap bmpBomb;
+    private Bitmap bmpExplosion;
     int score = 0;
+
     private Context context;
 
     private boolean buttonPressed = false;
@@ -71,6 +76,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         //button spaces (each arrow is 100x100; the quit and pause buttons are 150x150
         quitSpace = new Rect(20, 926, 170, 1080);
 
+        bmpBomb = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
+        bmpExplosion = BitmapFactory.decodeResource(getResources(), R.drawable.explosion);
     }
 //max X is 1080, max Y is 1535
 
@@ -123,6 +130,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         if (this.score % 5 == 0 && spawnGhost) {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
             spawnGhost = false;
+
+        }
+//        if (dropBomb) {
+//            for (int i = bombs.size() - 1; i >= 0; i--) {
+//                bombs.get(i).drawBomb(c);
+//            }
+//        }
+        for (int i = bombs.size() - 1; i >= 0; i--) {
+            bombs.get(i).drawBomb(c);
+        }
+
+
+        for (int i = bombs.size()-1; i > 0; i--) {
+            for (int j = ghosts.size()-1; j>0; j--) {
+                double radius = pythag(ghosts.get(j),bombs.get(i));
+                if (radius < 100) {
+                    ghosts.remove(ghosts.get(j));
+                    bombs.get(i).changeImage(bmpExplosion);
+                    bombs.get(i).changeLife(3);
+                }
+            }
         }
 
         for (int i = ghosts.size() - 1; i > 0; i--) {
@@ -145,14 +173,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                     ghosts.remove(ghost);
                 }
             }
+
             ghost.draw(c);
         }
 
     }
 
+
     private void drawBackground(Canvas c, Paint myPaint) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.background);
         c.drawBitmap(bmp, 0*1920/this.getWidth(), 0, myPaint);
+
     }
 
     @Override
@@ -199,11 +230,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         ghosts.add(createSprite(R.drawable.ghostarray));
     }
 
+//    private void createBombs() {
+//        bombs.add(createBomb(R.drawable.bomb));
+//    }
+
+    //new constructor, attempting to make bombs show up on click
+//    private Bomb createBomb(int resource) {
+//        Bitmap bmpBomb = BitmapFactory.decodeResource(getResources(), resource);
+//        return new Bomb(this,bmpBomb);
+//    }
+
     private Ghost createSprite(int resource) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), resource);
         return new Ghost(this,bmp);
     }
 
+
+    public double pythag(Ghost g, Bomb b) {
+        double xdist = g.getX() - b.getX();
+        double ydist = g.getY() - b.getY();
+        double radius = Math.sqrt((Math.pow(xdist, 2)) + (Math.pow(ydist, 2)));
+        return radius;
+    }
     public void gameOver(Canvas c, Paint myPaint) {
         gameLoopThread.setRunning(false);
         c.drawColor(Color.RED);
@@ -214,17 +262,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setFakeBoldText(false);
         myPaint.setTextSize(80);
         c.drawText("Your score was: " + score, this.getWidth()/4, this.getHeight()/2, myPaint);
+
     }
 
 
     // handles "button" presses
     @Override
     public boolean onTouchEvent (MotionEvent event) {
+
+        float x = event.getX();
+        float y = event.getY();
+        bombs.add(new Bomb(bombs, this, x, y, bmpBomb));
+
         if(event.getAction() == MotionEvent.ACTION_UP) {
             buttonPressed = false;
             return true;
         }
         if(rightSpace.contains((int) event.getX(), (int) event.getY())) {
+
             buttonPressed = true;
             switch(event.getAction()) {
                 case MotionEvent.ACTION_DOWN :
