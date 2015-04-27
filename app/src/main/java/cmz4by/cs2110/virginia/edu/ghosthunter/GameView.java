@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private GameLoopThread gameLoopThread;
     private List<Ghost> ghosts = new ArrayList<Ghost>();
     private Player player;
+    private Canvas canvas;
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     private int ammo = 6;
@@ -43,6 +45,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Rect rightSpace;
     private Rect quitSpace;
     private Rect attackSpace;
+    private Rect barrierSpace;
 
     private Bitmap arrowUp;
     private Bitmap arrowDown;
@@ -57,6 +60,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     private boolean buttonPressed = false;
     boolean spawnGhost = false;
+    private boolean canDrawBarrier = false;
+
+    private Path path;
 
     public GameView(Context context) {
         super(context);
@@ -88,6 +94,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     }
     @Override
     public void draw(Canvas c) {
+        canvas = c;
 
         Paint myPaint = new Paint();
         drawBackground(c, myPaint);
@@ -97,6 +104,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawText("Score: " + score, 20, 100, myPaint);
         myPaint.setTextSize(50);
         c.drawText("Ammo: " + ammo, 20, 180, myPaint);
+
+
+
+        if (barrierSpace.contains(player.getPlayerX(), player.getPlayerY())){
+            canDrawBarrier = true;
+        }
 
         for (Wall wall: walls) {
             wall.draw(c, myPaint);
@@ -119,10 +132,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawBitmap(arrowUp, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight() - arrowUp.getHeight(), myPaint);
         c.drawBitmap(attackButton, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(), myPaint);
 
+        Paint topRight = new Paint();
+        topRight.setColor(Color.BLUE);
+        topRight.setStyle(Paint.Style.STROKE);
+        topRight.setStrokeWidth(20);
 
         c.drawRect(quitSpace, myPaint);
+        c.drawRect(barrierSpace, topRight);
 
         player.draw(c);
+
+
         if (this.score % 5 != 0) {
             spawnGhost = true;
         }
@@ -154,6 +174,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             ghost.draw(c);
         }
 
+    }
+
+    private void drawBarrier(Canvas c, Paint barrierPaint){
+        c.drawPath(path, barrierPaint);
     }
 
 
@@ -202,6 +226,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         attackSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(),
                                 this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight());
         quitSpace = new Rect(Math.round(20 *scaleWidth), Math.round(1750*scaleHeight),Math.round( 170 * scaleWidth), Math.round(1900 * scaleHeight));
+        barrierSpace = new Rect(this.getWidth() - Math.round(20 *scaleWidth) - Math.round(100*scaleWidth), Math.round(20*scaleHeight), this.getWidth() - Math.round(20 *scaleWidth), Math.round(20*scaleHeight) + Math.round(100*scaleHeight));
     }
 
     @Override
@@ -232,11 +257,63 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setTextSize(60);
         c.drawText("Your score was: " + score, this.getWidth()/ 7, this.getHeight()/2, myPaint);
     }
+    private float mX, mY;
+    private static final float TOUCH_TOLERANCE = 4;
 
+    private void touch_start(float x, float y) {
+//showDialog();
+        path.reset();
+        path.moveTo(x, y);
+        mX = x;
+        mY = y;
+
+    }
+    private void touch_move(float x, float y) {
+        float dx = Math.abs(x - mX);
+        float dy = Math.abs(y - mY);
+        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+            path.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
+            mX = x;
+            mY = y;
+        }
+    }
+    private void touch_up() {
+        Paint barrierPaint = new Paint();
+        barrierPaint.setColor(Color.BLUE);
+        path.lineTo(mX, mY);
+// commit the path to our offscreen
+        canvas.drawPath(path, barrierPaint);
+// kill this so we don't double draw
+        path.reset();
+    }
 
     // handles "button" presses
     @Override
     public boolean onTouchEvent (MotionEvent event) {
+
+        if (canDrawBarrier) {
+            float x = event.getX();
+            float y = event.getY();
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN :
+                   touch_start(x,y);
+                   invalidate();
+                    break;
+
+                case MotionEvent.ACTION_MOVE :
+                    touch_move(x,y);
+                    invalidate();
+                    break;
+
+                case MotionEvent.ACTION_UP :
+                    touch_up();
+                    invalidate();
+                    break;
+            }
+            return true;
+
+            }
+
         if(event.getAction() == MotionEvent.ACTION_UP) {
             buttonPressed = false;
             return true;
