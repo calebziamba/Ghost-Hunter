@@ -88,7 +88,7 @@ public class Player{
 
         for(Wall wall :walls) {
             if (Rect.intersects(hitbox, wall.getRect()))
-                this.playerY = wall.getRect().top;
+                this.playerY = wall.getRect().top - height;
         }
         if (playerY >= gameView.getHeight() - height)
             this.playerY = gameView.getHeight() - height;
