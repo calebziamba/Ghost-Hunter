@@ -105,9 +105,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setTextSize(80);
         c.drawText("Score: " + score, 20, 100, myPaint);
         myPaint.setTextSize(50);
-        c.drawText("Ammo: " + ammo, 20, 280, myPaint);
+        c.drawText("Ammo: " + ammo, 20, 200, myPaint);
         myPaint.setTextSize(50);
-        c.drawText("Bombs: " + bombCount, 20, 320, myPaint);
+        c.drawText("Bombs: " + bombCount, 20, 240, myPaint);
 
 
         for (Wall wall: walls) {
@@ -309,16 +309,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     // handles "button" presses
     @Override
     public boolean onTouchEvent (MotionEvent event) {
-
         float x = event.getX();
         float y = event.getY();
-        if (bombs.size() < 1) {
-            bombs.add(new Bomb(bombs, this, x, y, bmpBomb));
-        }
-        if (bombCount > 0) {
-            bombCount -=1;
-        }
+        if (!upSpace.contains((int)x,(int)y) && !downSpace.contains((int)x,(int)y) && !leftSpace.contains((int)x,(int)y) && !rightSpace.contains((int)x,(int)y) && !attackSpace.contains((int)x,(int)y) ) {
 
+            if (bombs.size() < 3 && bombCount > 0) {
+                bombs.add(new Bomb(bombs, this, x, y, bmpBomb));
+            }
+            if (bombCount > 0) {
+                bombCount -= 1;
+            }
+        }
 
         if(event.getAction() == MotionEvent.ACTION_UP) {
             buttonPressed = false;
