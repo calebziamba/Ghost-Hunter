@@ -18,10 +18,9 @@
         </activity>
 
         <activity android:name=".MainActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:screenOrientation="portrait"
-            android:configChanges="keyboard|orientation|screenSize"
-        android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
-
+            android:configChanges="keyboard|orientation|screenSize"> </activity>
 
         <activity android:name=".StartMenu"
             android:theme="@style/Theme.AppCompat.NoActionBar"></activity>

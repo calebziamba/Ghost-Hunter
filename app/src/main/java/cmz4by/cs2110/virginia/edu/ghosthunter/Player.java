@@ -111,4 +111,16 @@ public class Player{
         return this.hitbox;
     }
 
+    public int getDirection() {
+        return this.direction;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
 }
