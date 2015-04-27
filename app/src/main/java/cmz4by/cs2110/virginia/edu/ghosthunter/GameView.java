@@ -4,6 +4,7 @@ package cmz4by.cs2110.virginia.edu.ghosthunter;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -32,6 +34,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private ArrayList<Wall> walls;
 
     private ArrayList<Collectible> collectibles = new ArrayList<>();
+
+    private static float scaleWidth;
+    private static float scaleHeight;
 
     //button spaces
     private Rect upSpace;
@@ -75,7 +80,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         attackButton = BitmapFactory.decodeResource(getResources(), R.drawable.attack_button);
 
         //button spaces (each arrow is 100x100; the quit and pause buttons are 150x150
-        quitSpace = new Rect(20, 926, 170, 1080);
+
 
         bmpBomb = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
         bmpExplosion = BitmapFactory.decodeResource(getResources(), R.drawable.explosion);
@@ -97,9 +102,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
         myPaint.setColor(Color.RED);
         myPaint.setTextSize(80);
-        c.drawText("Score: " + score, 50, 200, myPaint);
+        c.drawText("Score: " + score, 20, 100, myPaint);
         myPaint.setTextSize(50);
-        c.drawText("Ammo: " + ammo, 50, 280, myPaint);
+        c.drawText("Ammo: " + ammo, 20, 180, myPaint);
 
         for (Wall wall: walls) {
             wall.draw(c, myPaint);
@@ -121,6 +126,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawBitmap(arrowLeft, this.getWidth()/2 - attackButton.getWidth()/2 - arrowRight.getWidth(), this.getHeight() - arrowDown.getHeight() - arrowLeft.getHeight(), myPaint);
         c.drawBitmap(arrowUp, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight() - arrowUp.getHeight(), myPaint);
         c.drawBitmap(attackButton, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(), myPaint);
+
 
         c.drawRect(quitSpace, myPaint);
 
@@ -195,8 +201,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private void drawBackground(Canvas c, Paint myPaint) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.background);
 
-        c.drawBitmap(bmp, 0, 0, myPaint);
+        float scaleHeight = (float) bmp.getHeight() / (float) getHeight();
+        float scaleWidth = (float) bmp.getWidth() / (float) getWidth();
+        int newWidth = Math.round((bmp.getWidth() / scaleWidth));
+        int newHeight = Math.round(bmp.getHeight() / scaleHeight);
 
+
+        c.drawBitmap(Bitmap.createScaledBitmap(bmp, newWidth, newHeight, true), 0, 0, myPaint);
     }
 
     @Override
@@ -219,6 +230,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         gameLoopThread.start();
 
         walls = Wall.createWalls(this);
+        scaleWidth = (float)this.getWidth() / 1080;
+        scaleHeight = (float)this.getHeight() / 1920;
+
         downSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight(),
                                 this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight());
         leftSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2 - arrowLeft.getWidth(), this.getHeight() - arrowDown.getHeight() - arrowLeft.getHeight(),
@@ -229,6 +243,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                                 this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight());
         attackSpace = new Rect(this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(),
                                 this.getWidth()/2 + attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight());
+        quitSpace = new Rect(Math.round(20 *scaleWidth), Math.round(1750*scaleHeight),Math.round( 170 * scaleWidth), Math.round(1900 * scaleHeight));
     }
 
     @Override
@@ -275,13 +290,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         gameLoopThread.setRunning(false);
         c.drawColor(Color.RED);
         myPaint.setColor(Color.BLACK);
-        myPaint.setTextSize(150);
+        myPaint.setTextSize(120);
         myPaint.setFakeBoldText(true);
-        c.drawText("GAME OVER", this.getWidth() / 6, this.getHeight() / 3, myPaint);
+        c.drawText("GAME OVER", this.getWidth() / 10, this.getHeight() / 3, myPaint);
         myPaint.setFakeBoldText(false);
-        myPaint.setTextSize(80);
-        c.drawText("Your score was: " + score, this.getWidth()/4, this.getHeight()/2, myPaint);
 
+        myPaint.setTextSize(60);
+        c.drawText("Your score was: " + score, this.getWidth()/ 7, this.getHeight()/2, myPaint);
     }
 
 

@@ -35,8 +35,8 @@ public class Player{
         currentFrame = 0;
         direction = 0;
 
-        this.playerX = 100;
-        this.playerY = 100;
+        this.playerX = 910;
+        this.playerY = 1000;
         this.hitbox = new Rect(playerX, playerY, playerX + width, playerY + height);
     }
 
