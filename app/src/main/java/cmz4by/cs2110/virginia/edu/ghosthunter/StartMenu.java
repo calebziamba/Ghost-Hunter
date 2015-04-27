@@ -15,7 +15,7 @@ import android.widget.Toast;
 import android.media.MediaPlayer;
 import android.widget.ToggleButton;
 
-public class StartMenu extends ActionBarActivity implements CompoundButton.OnCheckedChangeListener {
+public class StartMenu extends ActionBarActivity  {
     private Button mPlayButton;
     private Button mViewScoreButton;
     private Button mSettingsButton;
@@ -80,7 +80,8 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
                 Log.i(TAG, "calling onClick() on Settings button");
                 int a = 2;
                 goBack(a);
-                toggleSound();
+                onMusicClicked();
+                onHardClicked();
             }
         });
     }
@@ -112,28 +113,28 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
         }
 
     }
-    protected void toggleSound() {
+
+    protected void onMusicClicked() {
         mySound = MediaPlayer.create(this, R.raw.graveyard);
         mSound = (ToggleButton) findViewById(R.id.soundButton);
-        if (mSound.isChecked()) {
+        boolean on = mSound.isChecked();
+        if (on && !mySound.isPlaying()) {
             mySound.start();
+            mySound.setLooping(true);
         }
         else {
-            mySound.release();
+            mySound.pause();
         }
-
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        mySound = MediaPlayer.create(this, R.raw.graveyard);
-        mSound = (ToggleButton) findViewById(R.id.soundButton);
-        mSound.setOnCheckedChangeListener(this);
-        if (isChecked) {
-            mySound.start();
+    protected int onHardClicked() {
+        ToggleButton hard = (ToggleButton) findViewById(R.id.hardButton);
+        boolean on = hard.isChecked();
+        if (on) {
+            return 0;
         }
         else {
-            mySound.release();
+            return 1;
         }
     }
 
