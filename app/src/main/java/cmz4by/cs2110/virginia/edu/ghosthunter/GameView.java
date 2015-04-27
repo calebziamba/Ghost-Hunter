@@ -110,7 +110,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setTextSize(50);
         c.drawText("Bombs: " + bombCount, 20, 320, myPaint);
 
-        
+
         for (Wall wall: walls) {
             wall.draw(c, myPaint);
         }
@@ -310,6 +310,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
         myPaint.setTextSize(60);
         c.drawText("Your score was: " + score, this.getWidth()/ 7, this.getHeight()/2, myPaint);
+        c.drawBitmap(quitGame, 0, this.getHeight() - 150, myPaint);
     }
 
 
