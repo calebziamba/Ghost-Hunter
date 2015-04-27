@@ -75,6 +75,23 @@ public class Ghost {
             hitboxFront.set(x + this.width/2, y, x + this.width, y + this.height);
     }
 
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getX() {
+
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
     public void draw(Canvas canvas) {
         update();
         int srcX = currentFrame * width;

@@ -50,6 +50,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     private Bitmap pauseGame;
 
     private Bitmap bmpBomb;
+    private Bitmap bmpExplosion;
 
     long score = 0;
     private Context context;
@@ -88,6 +89,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         leftSpace = new Rect(430, 1720, 530, 1820);
 
         bmpBomb = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
+        bmpExplosion = BitmapFactory.decodeResource(getResources(), R.drawable.explosion);
     }
 //max X is 1080, max Y is 1535
 
@@ -145,17 +147,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         if (this.score % 5 == 0 && spawnGhost) {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
             spawnGhost = false;
-<<<<<<< HEAD
+
         }
+//        if (dropBomb) {
+//            for (int i = bombs.size() - 1; i >= 0; i--) {
+//                bombs.get(i).drawBomb(c);
+//            }
+//        }
         for (int i = bombs.size() - 1; i >= 0; i--) {
-            bombs.get(i).onDraw(c);
-=======
->>>>>>> 58fc8c84cc8bcb1416696caad77504a831395a37
+            bombs.get(i).drawBomb(c);
         }
-        
+
+        for (int i = bombs.size()-1; i > 0; i--) {
+            for (int j = ghosts.size()-1; j>0; j--) {
+                double radius = pythag(ghosts.get(j),bombs.get(i));
+                if (radius < 100) {
+                    ghosts.remove(ghosts.get(j));
+                    bombs.get(i).changeImage(bmpExplosion);
+                    bombs.get(i).changeLife(3);
+                }
+            }
+        }
+
+
         for (Ghost ghost : ghosts) {
             ghost.draw(c);
-
         }
 
 
@@ -199,15 +215,39 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         ghosts.add(createSprite(R.drawable.ghostarray));
     }
 
+//    private void createBombs() {
+//        bombs.add(createBomb(R.drawable.bomb));
+//    }
+
+    //new constructor, attempting to make bombs show up on click
+//    private Bomb createBomb(int resource) {
+//        Bitmap bmpBomb = BitmapFactory.decodeResource(getResources(), resource);
+//        return new Bomb(this,bmpBomb);
+//    }
+
     private Ghost createSprite(int resource) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), resource);
         return new Ghost(this,bmp);
+    }
+
+    public double pythag(Ghost g, Bomb b) {
+        double xdist = g.getX()-b.getX();
+        double ydist = g.getY()-b.getY();
+        double radius = Math.sqrt((Math.pow(xdist, 2))+(Math.pow(ydist, 2)));
+        return radius;
     }
 
 
     // handles "button" presses
     @Override
     public boolean onTouchEvent (MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+        bombs.add(new Bomb(bombs, this, x, y, bmpBomb));
+
+
+
+
         if(touchedInsideItem(rightSpace, event.getX(), event.getY())) {
             buttonPressed = true;
             switch(event.getAction()) {

@@ -9,7 +9,8 @@ public class Bomb {
     private float y;
     private Bitmap bmp;
 
-    private int life = 20;
+
+    private int life = 10;
     private List<Bomb> bombs;
 
     public Bomb(List<Bomb> bombs, GameView gameView, float x, float y, Bitmap bmp) {
@@ -20,8 +21,21 @@ public class Bomb {
         this.bmp = bmp;
         this.bombs = bombs;
     }
+    //second constructor
+//    public Bomb(GameView gameView, Bitmap bmpBomb) {
+//
+//        this.bmp = bmpBomb;
+//    }
 
-    public void onDraw(Canvas canvas) {
+    public void changeLife(int time) {
+        this.life = time;
+    }
+
+    public void changeImage(Bitmap bmp) {
+        this.bmp = bmp;
+    }
+
+    public void drawBomb(Canvas canvas) {
         update();
         canvas.drawBitmap(bmp, x, y, null);
     }
@@ -32,6 +46,18 @@ public class Bomb {
         }
     }
 
+    public void setY(float y) {
+        this.y = y;
+    }
 
+    public void setX(float x) {
+        this.x = x;
+    }
 
+    public float getX() {
+        return x;
+    }
+    public float getY() {
+        return y;
+    }
 }
