@@ -110,7 +110,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             wall.draw(c, myPaint);
         }
 
-        for(int i = projectiles.size() - 1; i > 0; i--) {
+        for(int i = projectiles.size() - 1; i >= 0; i--) {
             Projectile p = projectiles.get(i);
             if (p.getX() > this.getWidth() || p.getX() < 0 - p.getBmp().getWidth()) {
                 projectiles.remove(p);
@@ -133,7 +133,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         player.draw(c);
         spawnGun(c);
 
-        for (int i = collectibles.size() - 1; i > 0; i--) {
+        for (int i = collectibles.size() - 1; i >= 0; i--) {
             Collectible collectible = collectibles.get(i);
             collectible.draw(c);
             if (Rect.intersects(player.getHitbox(), collectible.getHitbox())) {
@@ -189,6 +189,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                         Rect.intersects(p.getHitbox(), ghost.getHitboxBack())) {
                     projectiles.remove(p);
                     ghosts.remove(ghost);
+                    score += 5;
                 }
             }
 
@@ -462,5 +463,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         return true;
     }
 
-
+    public ArrayList<Wall> getWalls() {
+        return this.walls;
+    }
 }
