@@ -26,7 +26,7 @@
         android:layout_toRightOf="@+id/settings_back"
         android:layout_toEndOf="@+id/settings_back" />
 
-    <ToggleButton
+    <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sound"
@@ -34,7 +34,8 @@
         android:checked="true"
         android:layout_alignTop="@+id/sound_text"
         android:layout_toRightOf="@+id/settings_text"
-        android:layout_toEndOf="@+id/settings_text" />
+        android:layout_toEndOf="@+id/settings_text"
+        android:onClick="toggleMusic"/>
 
     <TextView
         android:layout_width="wrap_content"

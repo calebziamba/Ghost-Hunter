@@ -16,23 +16,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="78dp" />
 
-    <Button
+    <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View High Score"
+        android:text="Sound"
         android:id="@+id/viewhighscore"
+        android:checked="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings"
-        android:id="@+id/settings"
-        android:layout_marginTop="97dp"
-        android:layout_below="@+id/viewhighscore"
-        android:layout_alignRight="@+id/play"
-        android:layout_alignEnd="@+id/play" />
+        android:layout_centerHorizontal="true"
+        android:onClick="toggleMusic"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -41,8 +33,7 @@
         android:text="Ghost Hunter"
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/viewhighscore"
-        android:layout_alignStart="@+id/viewhighscore"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="36dp" />
 
 </RelativeLayout>

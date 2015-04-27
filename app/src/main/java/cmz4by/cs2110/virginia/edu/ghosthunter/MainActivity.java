@@ -35,8 +35,8 @@ public class MainActivity extends ActionBarActivity {
         gameView = new GameView(this);
         setContentView(gameView);
         media = MediaPlayer.create(this, R.raw.graveyard);
-        media.start();
-        media.setLooping(true);
+       // media.start();
+       // media.setLooping(true);
     }
 
     @Override
