@@ -8,50 +8,52 @@
     tools:context=".MainActivity"
     android:weightSum="1">
 
-
-    <Button
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="UP"
-        android:onClick="turnUp"/>
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="UP"
+            android:id="@+id/up"
+            android:onClick="turnUp"
+            android:layout_above="@+id/right"
+            android:layout_toLeftOf="@+id/right"
+            android:layout_toStartOf="@+id/right" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="LEFT"
-        android:onClick="turnLeft"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="LEFT"
+            android:id="@+id/left"
+            android:onClick="turnLeft"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/down" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Right"
-        android:onClick="turnRight"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="Right"
+            android:id="@+id/right"
+            android:onClick="turnRight"
+            android:layout_alignBaseline="@+id/left"
+            android:layout_alignBottom="@+id/left"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Down"
-        android:onClick="turnDown"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Down"
+            android:id="@+id/down"
+            android:onClick="turnDown"
+            android:layout_weight="1"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/right"
+            android:layout_toStartOf="@+id/right" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/player"
-        android:layout_gravity="center"
-        android:contentDescription="player_character"
-        android:src="@drawable/poliwag_left"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Give Spear"
-        android:onClick="giveSpear"/>
-
-    <SurfaceView
-        android:layout_width="109dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/surfaceView"
-        android:layout_weight="0.20"
-        android:layout_gravity="center_horizontal" />
+    </RelativeLayout>
 
 </LinearLayout>
