@@ -3,6 +3,8 @@ package cmz4by.cs2110.virginia.edu.ghosthunter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
@@ -66,8 +68,8 @@ public class Player{
 
     public void moveDown() {
         this.playerY += PLAYER_SPEED;
-        if (playerY >= gameView.getHeight() - playerImage.getHeight())
-            this.playerY = gameView.getHeight() - playerImage.getHeight();
+        if (playerY >= gameView.getHeight() - height)
+            this.playerY = gameView.getHeight() - height;
         this.direction = 0;
         updateHitbox();
         currentFrame = ++currentFrame % BMP_COLUMNS;
@@ -75,8 +77,8 @@ public class Player{
 
     public void moveRight() {
         this.playerX += PLAYER_SPEED;
-        if (playerX >= gameView.getWidth() - playerImage.getWidth())
-            this.playerX = gameView.getWidth() - playerImage.getWidth();
+        if (playerX >= gameView.getWidth() - width)
+            this.playerX = gameView.getWidth() - width;
         this.direction = 2;
         updateHitbox();
         currentFrame = ++currentFrame % BMP_COLUMNS;
