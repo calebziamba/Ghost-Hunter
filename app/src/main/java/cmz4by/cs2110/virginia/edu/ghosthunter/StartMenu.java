@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.media.MediaPlayer;
 import android.widget.ToggleButton;
@@ -135,5 +136,6 @@ public class StartMenu extends ActionBarActivity implements CompoundButton.OnChe
             mySound.release();
         }
     }
+
 
 }

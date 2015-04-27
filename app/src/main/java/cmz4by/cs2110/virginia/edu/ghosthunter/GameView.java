@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -210,6 +212,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setFakeBoldText(false);
         myPaint.setTextSize(80);
         c.drawText("Your score was: " + score, this.getWidth()/4, this.getHeight()/2, myPaint);
+
+
     }
 
 
@@ -352,6 +356,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         }
         return true;
     }
+
 
 
 }
