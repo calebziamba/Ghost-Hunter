@@ -145,9 +145,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         if (this.score % 5 == 0 && spawnGhost) {
             ghosts.add(new Ghost(this, BitmapFactory.decodeResource(getResources(), R.drawable.ghostarray)));
             spawnGhost = false;
+<<<<<<< HEAD
         }
         for (int i = bombs.size() - 1; i >= 0; i--) {
             bombs.get(i).onDraw(c);
+=======
+>>>>>>> 58fc8c84cc8bcb1416696caad77504a831395a37
         }
         
         for (Ghost ghost : ghosts) {
