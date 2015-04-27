@@ -79,6 +79,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         arrowLeft = BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow);
         arrowRight = BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow);
         attackButton = BitmapFactory.decodeResource(getResources(), R.drawable.attack_button);
+        quitGame = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.quit), 150, 150, true);
 
         //button spaces (each arrow is 100x100; the quit and pause buttons are 150x150
 
@@ -109,7 +110,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         myPaint.setTextSize(50);
         c.drawText("Bombs: " + bombCount, 20, 320, myPaint);
 
-
+        
         for (Wall wall: walls) {
             wall.draw(c, myPaint);
         }
@@ -130,9 +131,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         c.drawBitmap(arrowLeft, this.getWidth()/2 - attackButton.getWidth()/2 - arrowRight.getWidth(), this.getHeight() - arrowDown.getHeight() - arrowLeft.getHeight(), myPaint);
         c.drawBitmap(arrowUp, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight() - arrowUp.getHeight(), myPaint);
         c.drawBitmap(attackButton, this.getWidth()/2 - attackButton.getWidth()/2, this.getHeight() - arrowDown.getHeight() - attackButton.getHeight(), myPaint);
+        c.drawBitmap(quitGame, 0, this.getHeight() - quitGame.getHeight(), null);
 
 
-        c.drawRect(quitSpace, myPaint);
 
         player.draw(c);
         spawnGun(c);

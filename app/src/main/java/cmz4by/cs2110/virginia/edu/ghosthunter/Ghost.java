@@ -25,7 +25,7 @@ public class Ghost {
     private int height;
     private Rect hitboxFront;
     private Rect hitboxBack;
-    private boolean difficulty;
+    private int counter = 0;
 
     public Ghost(GameView gameView, Bitmap bmp) {
         this.width = bmp.getWidth() / BMP_COLUMNS;
@@ -60,13 +60,12 @@ public class Ghost {
     }
 
     private void update() {
-        if (gameView.score % 25 != 0) {
-            difficulty = true;
-        }
-        if (gameView.score % 25 == 0 && difficulty) {
+        if (counter < 250) {
+            counter++;
+        } else if (counter >= 250) {
             xSpeed = 3*xSpeed;
             ySpeed = 3*ySpeed;
-            difficulty = false;
+            counter = 0;
         }
 
         if (x >= gameView.getWidth() - width - xSpeed || x + xSpeed <= 0) {
