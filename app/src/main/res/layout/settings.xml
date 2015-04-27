@@ -13,26 +13,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="81dp" />
 
-    <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Accelerometer"
-        android:id="@+id/accButton"
-        android:checked="false"
-        android:layout_below="@+id/settings_text"
-        android:layout_toRightOf="@+id/settings_text"
-        android:layout_toEndOf="@+id/settings_text"
-        android:layout_marginTop="53dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Accelerometer"
-        android:id="@+id/acc_text"
-        android:layout_alignBottom="@+id/accButton"
-        android:layout_toLeftOf="@+id/settings_text"
-        android:layout_toStartOf="@+id/settings_text" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -40,10 +21,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Sound"
         android:id="@+id/sound_text"
-        android:layout_marginTop="106dp"
-        android:layout_below="@+id/acc_text"
-        android:layout_alignLeft="@+id/acc_text"
-        android:layout_alignStart="@+id/acc_text" />
+        android:layout_marginTop="66dp"
+        android:layout_below="@+id/settings_text"
+        android:layout_toRightOf="@+id/settings_back"
+        android:layout_toEndOf="@+id/settings_back" />
 
     <ToggleButton
         android:layout_width="wrap_content"
@@ -51,9 +32,9 @@
         android:text="Sound"
         android:id="@+id/soundButton"
         android:checked="true"
-        android:layout_alignBottom="@+id/sound_text"
-        android:layout_alignLeft="@+id/accButton"
-        android:layout_alignStart="@+id/accButton" />
+        android:layout_alignTop="@+id/sound_text"
+        android:layout_toRightOf="@+id/settings_text"
+        android:layout_toEndOf="@+id/settings_text" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -61,10 +42,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Increased Difficulty"
         android:id="@+id/level"
-        android:layout_below="@+id/sound_text"
-        android:layout_alignLeft="@+id/sound_text"
-        android:layout_alignStart="@+id/sound_text"
-        android:layout_marginTop="98dp" />
+        android:layout_below="@+id/soundButton"
+        android:layout_alignRight="@+id/settings_text"
+        android:layout_alignEnd="@+id/settings_text"
+        android:layout_marginTop="107dp" />
 
     <ToggleButton
         android:layout_width="wrap_content"
